@@ -10,7 +10,7 @@ export default function DashboardPage() {
             Booster
           </span>
           <br />
-          to Your NextJS Apps
+          to Find Your Dream Job
         </h1>
         <div className='my-6 px-20 text-center text-2xl text-text-secondary'>
           An approachable performant and versatile boilerplate for building SSR applications
