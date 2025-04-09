@@ -4,7 +4,7 @@ import { type Metadata } from "next";
 import NextTopLoader from 'nextjs-toploader'
 import { Header } from '~/components/Header'
 
-import { Inter, Rubik, Space_Grotesk } from 'next/font/google'
+import { Space_Grotesk } from 'next/font/google'
 
 export const metadata: Metadata = {
   title: "AJF",
@@ -12,10 +12,6 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--inter'
-})
 const space_grotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-space-grotesk'
