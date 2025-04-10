@@ -67,7 +67,7 @@ export default function ThemeSwitch() {
             aria-orientation="vertical"
             aria-labelledby="options-menu"
           >
-            {["light", "dark", "system"].map((themeItem) => (
+            {themes.map((themeItem) => (
               <button
                 key={themeItem}
                 onClick={() => {

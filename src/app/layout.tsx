@@ -35,12 +35,6 @@ export default function RootLayout({
           themes={[
             'light',
             'dark',
-            'instagram',
-            'facebook',
-            'discord',
-            'netflix',
-            'twilight',
-            'reddit'
           ]}
         >
             <NextTopLoader
