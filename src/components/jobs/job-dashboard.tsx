@@ -14,7 +14,7 @@ import FilterSidebar from "./filter-sidebar"
 import { useDebounce } from "~/hooks/use-debounce"
 import { cn } from "~/lib/utils"
 import type { Job } from "~/types/jobs"
-import type { JobsResponse } from "~/types/jobs"
+import { type JobsResponse } from "~/types/jobs"
 
 export default function JobDashboard() {
   // State
@@ -63,7 +63,7 @@ export default function JobDashboard() {
         throw new Error("Failed to fetch jobs")
       }
 
-      const data: JobsResponse = await response.json()
+      const data = await response.json() as JobsResponse
       setJobs(data.jobs)
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
@@ -74,7 +74,7 @@ export default function JobDashboard() {
 
   // Fetch jobs when API parameters change
   useEffect(() => {
-    fetchJobs()
+    void fetchJobs()
   }, [fetchJobs])
 
   // Apply client-side filters
