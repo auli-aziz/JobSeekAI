@@ -2,26 +2,30 @@
 
 import type React from "react"
 
-import { useState, useRef, useCallback, useEffect } from "react"
-import Button from "../Button"
+import { useState, useCallback, useEffect } from "react"
+import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Badge } from "../ui/badge"
 import { Search, Briefcase, FilterIcon, X, RefreshCw, LayoutList, LayoutGrid } from "lucide-react"
 import { Skeleton } from "../ui/skeleton"
-import JobList from "@/components/job-list"
-import JobGrid from "@/components/job-grid"
-import FilterSidebar from "@/components/filter-sidebar"
-import { useDebounce } from "@/hooks/use-debounce"
-import { useInfiniteJobs } from "@/hooks/use-infinite-jobs"
-import { useIntersection } from "@/hooks/use-intersection"
+import JobList from "./job-list"
+import JobGrid from "./job-grid"
+import FilterSidebar from "./filter-sidebar"
+import { useDebounce } from "~/hooks/use-debounce"
 import { cn } from "~/lib/utils"
+import type { Job } from "~/types/jobs"
+import type { JobsResponse } from "~/types/jobs"
 
 export default function JobDashboard() {
   // State
+  const [jobs, setJobs] = useState<Job[]>([])
+  const [filteredJobs, setFilteredJobs] = useState<Job[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
   const [searchTerm, setSearchTerm] = useState("")
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("")
   const [category, setCategory] = useState("software-dev")
-  const [companyName, setCompanyName] = useState("")
   const [debouncedCompanyName, setDebouncedCompanyName] = useState("")
   const [jobType, setJobType] = useState("all")
   const [location, setLocation] = useState("all")
@@ -29,51 +33,82 @@ export default function JobDashboard() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  // Refs
-  const bottomRef = useRef<HTMLDivElement>(null)
-
   // Debounce search terms
   const debouncedSearch = useDebounce((value: string) => {
     setDebouncedSearchTerm(value)
   }, 500)
 
-  const debouncedCompany = useDebounce((value: string) => {
-    setDebouncedCompanyName(value)
-  }, 500)
-
-  // Handle input changes with debounce
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value)
     debouncedSearch(e.target.value)
   }
 
-  const handleCompanyChange = (value: string) => {
-    setCompanyName(value)
-    debouncedCompany(value)
-  }
 
-  // Setup intersection observer for infinite loading
-  const { isIntersecting } = useIntersection(bottomRef, {
-    threshold: 1.0,
-    rootMargin: "200px",
-  })
+  // Fetch jobs from API
+  const fetchJobs = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
 
-  // Fetch jobs with pagination
-  const { jobs, isLoading, error, fetchNextPage, hasNextPage, totalJobs, isFetchingNextPage, reset } = useInfiniteJobs({
-    search: debouncedSearchTerm,
-    category,
-    companyName: debouncedCompanyName,
-    jobType,
-    location,
-    showSalaryOnly,
-  })
+      // Build query parameters for API
+      const params = new URLSearchParams()
+      params.append("category", category)
+      if (debouncedSearchTerm) params.append("search", debouncedSearchTerm)
+      if (debouncedCompanyName) params.append("company_name", debouncedCompanyName)
+      params.append("limit", "100") // Get a reasonable number of jobs
 
-  // Load more jobs when the user scrolls to the bottom
-  useEffect(() => {
-    if (isIntersecting && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
+      const response = await fetch(`https://remotive.com/api/remote-jobs?${params.toString()}`)
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch jobs")
+      }
+
+      const data: JobsResponse = await response.json()
+      setJobs(data.jobs)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred")
+    } finally {
+      setIsLoading(false)
     }
-  }, [isIntersecting, fetchNextPage, hasNextPage, isFetchingNextPage])
+  }, [category, debouncedSearchTerm, debouncedCompanyName])
+
+  // Fetch jobs when API parameters change
+  useEffect(() => {
+    fetchJobs()
+  }, [fetchJobs])
+
+  // Apply client-side filters
+  useEffect(() => {
+    let result = jobs
+
+    // Apply job type filter
+    if (jobType !== "all") {
+      result = result.filter((job) => job.job_type === jobType)
+    }
+
+    // Apply location filter
+    if (location !== "all") {
+      result = result.filter((job) => job.candidate_required_location.toLowerCase().includes(location.toLowerCase()))
+    }
+
+    // Apply salary filter
+    if (showSalaryOnly) {
+      result = result.filter((job) => job.salary && job.salary.trim() !== "")
+    }
+
+    setFilteredJobs(result)
+  }, [jobs, jobType, location, showSalaryOnly])
+
+  // Reset all filters
+  const resetFilters = useCallback(() => {
+    setSearchTerm("")
+    setDebouncedSearchTerm("")
+    setCategory("software-dev")
+    setDebouncedCompanyName("")
+    setJobType("all")
+    setLocation("all")
+    setShowSalaryOnly(false)
+  }, [])
 
   // Filter counts for UI
   const activeFilterCount = [
@@ -84,19 +119,6 @@ export default function JobDashboard() {
     location !== "all",
     showSalaryOnly,
   ].filter(Boolean).length
-
-  // Reset all filters
-  const resetFilters = useCallback(() => {
-    setSearchTerm("")
-    setDebouncedSearchTerm("")
-    setCategory("software-dev")
-    setCompanyName("")
-    setDebouncedCompanyName("")
-    setJobType("all")
-    setLocation("all")
-    setShowSalaryOnly(false)
-    reset()
-  }, [reset])
 
   // Toggle sidebar
   const toggleSidebar = () => {
@@ -111,8 +133,8 @@ export default function JobDashboard() {
         onClose={() => setSidebarOpen(false)}
         category={category}
         setCategory={setCategory}
-        companyName={companyName}
-        setCompanyName={handleCompanyChange}
+        companyName={debouncedCompanyName}
+        setCompanyName={setDebouncedCompanyName}
         jobType={jobType}
         setJobType={setJobType}
         location={location}
@@ -175,6 +197,10 @@ export default function JobDashboard() {
                     <span className="sr-only">List view</span>
                   </Button>
                 </div>
+                <Button variant="ghost" size="icon" className="h-10 w-10" onClick={fetchJobs}>
+                  <RefreshCw className="h-4 w-4" />
+                  <span className="sr-only">Refresh</span>
+                </Button>
               </div>
             </div>
           </div>
@@ -196,7 +222,7 @@ export default function JobDashboard() {
               {debouncedSearchTerm && (
                 <Badge variant="outline" className="text-xs">
                   Search: {debouncedSearchTerm}
-                  <button
+                  <Button
                     className="ml-1"
                     onClick={() => {
                       setSearchTerm("")
@@ -204,21 +230,7 @@ export default function JobDashboard() {
                     }}
                   >
                     <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              )}
-              {debouncedCompanyName && (
-                <Badge variant="outline" className="text-xs">
-                  Company: {debouncedCompanyName}
-                  <button
-                    className="ml-1"
-                    onClick={() => {
-                      setCompanyName("")
-                      setDebouncedCompanyName("")
-                    }}
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
+                  </Button>
                 </Badge>
               )}
               {jobType !== "all" && (
@@ -257,18 +269,18 @@ export default function JobDashboard() {
         <div className="container px-4 py-3 border-b border-slate-100">
           <div className="flex items-center justify-between">
             <div className="text-sm text-slate-500">
-              {isLoading && jobs.length === 0 ? (
+              {isLoading ? (
                 "Loading jobs..."
               ) : error ? (
                 "Error loading jobs"
               ) : (
                 <>
-                  <span className="font-medium text-slate-700">{totalJobs}</span> jobs found
+                  <span className="font-medium text-slate-700">{filteredJobs.length}</span> jobs found
                 </>
               )}
             </div>
             {error && (
-              <Button variant="outline" size="sm" onClick={reset} className="text-xs">
+              <Button variant="secondary" size="sm" onClick={fetchJobs} className="text-xs">
                 <RefreshCw className="h-3 w-3 mr-1" />
                 Retry
               </Button>
@@ -278,8 +290,8 @@ export default function JobDashboard() {
 
         {/* Job Listings */}
         <div className="container px-4 py-6">
-          {isLoading && jobs.length === 0 ? (
-            // Initial loading state
+          {isLoading ? (
+            // Loading state
             <div
               className={cn(viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" : "space-y-4")}
             >
@@ -293,12 +305,12 @@ export default function JobDashboard() {
             // Error state
             <div className="text-center p-10 border border-red-100 rounded-lg bg-red-50">
               <p className="text-red-600 mb-4">{error}</p>
-              <Button onClick={reset}>
+              <Button onClick={fetchJobs}>
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Try Again
               </Button>
             </div>
-          ) : jobs.length === 0 ? (
+          ) : filteredJobs.length === 0 ? (
             // No results state
             <div className="text-center p-10 border border-slate-200 rounded-lg">
               <Briefcase className="h-12 w-12 mx-auto text-slate-300 mb-4" />
@@ -306,26 +318,14 @@ export default function JobDashboard() {
               <p className="text-slate-500 mb-4">Try changing your search or filters</p>
               <Button onClick={resetFilters}>Clear All Filters</Button>
             </div>
-          ) : (
-            // Results
-            <>
-              {viewMode === "grid" ? <JobGrid jobs={jobs} /> : <JobList jobs={jobs} />}
-
-              {/* Loading indicator at bottom for infinite scroll */}
-              <div ref={bottomRef} className="h-10 mt-8 flex items-center justify-center">
-                {isFetchingNextPage && (
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin h-5 w-5 border-2 border-slate-300 border-t-slate-600 rounded-full"></div>
-                    <span className="text-sm text-slate-500">Loading more jobs...</span>
-                  </div>
-                )}
-                {!hasNextPage && jobs.length > 0 && <p className="text-sm text-slate-500">No more jobs to load</p>}
-              </div>
-            </>
-          )}
+          ) : // Results
+            viewMode === "grid" ? (
+              <JobGrid jobs={filteredJobs} />
+            ) : (
+              <JobList jobs={filteredJobs} />
+            )}
         </div>
       </div>
     </div>
   )
 }
-
