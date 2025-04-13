@@ -74,11 +74,10 @@ export default function ThemeSwitch() {
                   setTheme(themeItem);
                   setIsOpen(false);
                 }}
-                className={`hover:bg-dropdownHover block w-full px-4 py-2 text-left text-sm ${
-                  themeItem === theme
-                    ? "bg-selected text-primary hover:bg-selected"
-                    : "text-secondary"
-                }`}
+                className={`hover:bg-dropdownHover block w-full px-4 py-2 text-left text-sm ${themeItem === theme
+                  ? "bg-selected text-primary hover:bg-selected"
+                  : "text-secondary"
+                  }`}
               >
                 {capitalize(themeItem)}
               </button>
