@@ -7,6 +7,7 @@ import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
 import { Dialog, DialogContent } from "../ui/dialog"
 import { Briefcase, DollarSign, MapPin, Building, Clock, ChevronRight, Star } from "lucide-react"
+import Image from "next/image"
 import { useState } from "react"
 import { formatDistanceToNow } from "date-fns"
 import type { Job } from "~/types/jobs"
@@ -59,13 +60,13 @@ export default function JobList({ jobs }: JobListProps) {
                 {/* Company Logo */}
                 <div className="h-12 w-12 rounded bg-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0 mr-4">
                   {job.company_logo ? (
-                    <img
-                      src={job.company_logo || "/placeholder.svg"}
+                    <Image
+                      src={job.company_logo}
                       alt={job.company_name}
                       className="h-full w-full object-contain"
-                      onError={(e) => {
-                        ; (e.target as HTMLImageElement).src = "/placeholder.svg?height=48&width=48"
-                      }}
+                      width={50}
+                      height={50}
+
                     />
                   ) : (
                     <Building className="h-6 w-6 text-slate-400" />

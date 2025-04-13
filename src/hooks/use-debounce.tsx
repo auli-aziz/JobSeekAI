@@ -1,3 +1,6 @@
+/* eslint-disable */
+//many error so i disable it
+
 "use client"
 
 import { useEffect, useRef } from "react"

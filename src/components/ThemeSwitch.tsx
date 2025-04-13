@@ -8,7 +8,7 @@ import Button from "./Button";
 export default function ThemeSwitch() {
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { setTheme, themes, theme } = useTheme();
+  const { setTheme, theme } = useTheme();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => setMounted(true), []);

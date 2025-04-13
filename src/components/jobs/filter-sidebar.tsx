@@ -29,8 +29,6 @@ export default function FilterSidebar({
   onClose,
   category,
   setCategory,
-  companyName,
-  setCompanyName,
   jobType,
   setJobType,
   location,
