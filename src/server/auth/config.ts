@@ -1,6 +1,8 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import LinkedInProvider from "next-auth/providers/linkedin";
 
 import { db } from "~/server/db";
 import {
@@ -38,17 +40,51 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
-    DiscordProvider,
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    LinkedInProvider({
+      clientId: process.env.LINKEDIN_CLIENT_ID!,
+      clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
+    }),
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const { email, password } = credentials!;
+
+        // 1. Cari user berdasarkan email
+        const existingUser = await db.query.user.findFirst({
+          where: eq(user.email, email),
+        });
+
+        if (!existingUser) {
+          throw new Error("Invalid email or password.");
+        }
+
+        // 2. Verifikasi password
+        const isValidPassword = await bcrypt.compare(
+          password,
+          existingUser.password
+        );
+
+        if (!isValidPassword) {
+          throw new Error("Invalid email or password.");
+        }
+
+        // 3. Return user object
+        return { id: existingUser.id, name: existingUser.name, email, role: existingUser.role, emailVerified: existingUser.emailVerified};
+      },
+    }),
   ],
+  pages: {
+    signIn: '/signin', // Replace default sign-in page
+    newUser: '/profile' // New users will be directed here on first sign in (leave the property out if not of interest)
+  },
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,

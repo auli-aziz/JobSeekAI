@@ -2,9 +2,10 @@
 
 import Button from "~/components/Button";
 import Link from "next/link";
-import { FaGoogle, FaLinkedinIn   } from "react-icons/fa";
+import { GoogleSignInButton, LinkedInSignInButton } from "~/components/AuthButton";
 
 export default function SignUpPage() {
+
   const inputClass =
     "h-12 w-full rounded-md border border-gray-800 bg-background px-4 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary";
 
@@ -54,14 +55,8 @@ export default function SignUpPage() {
             </p>
 
             <div className="mb-8 grid gap-4">
-              <Button className="h-12 w-full flex items-center justify-center gap-3">
-                <FaGoogle className="h-[20px] w-[20px]" />
-                Google
-              </Button>
-              <Button className="h-12 w-full flex items-center justify-center gap-3">
-                <FaLinkedinIn  className="h-[20px] w-[20px]" />
-                LinkedIn
-              </Button>
+              <GoogleSignInButton callback="/profile" />
+              <LinkedInSignInButton callback="/profile" />
             </div>
 
             <div className="relative mb-8">
