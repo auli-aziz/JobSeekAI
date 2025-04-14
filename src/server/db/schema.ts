@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { index, pgTableCreator, primaryKey } from "drizzle-orm/pg-core";
+import { index, pgTableCreator, primaryKey, serial, text, timestamp, vector } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
 /**
@@ -106,3 +106,19 @@ export const verificationTokens = createTable(
   }),
   (t) => [primaryKey({ columns: [t.identifier, t.token] })],
 );
+//Job list with embedding vector
+export const jobList = createTable("job_list", {
+  id: serial("id").primaryKey(),
+  jobId: text("job_id").notNull().unique(),
+  title: text("title").notNull(),
+  companyName: text("company_name").notNull(),
+  companyLogo: text("company_logo"),
+  category: text("category"),
+  jobType: text("job_type"),
+  publicationDate: timestamp("publication_date"),
+  location: text("location"),
+  salary: text("salary"),
+  url: text("url"),
+  description: text("description"),
+  embedding: vector("embedding", { dimensions: 1536 }), // text-embedding-3-small dimesion = 1536
+});
