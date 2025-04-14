@@ -11,7 +11,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 
 export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   return (
     <header className="relative mx-auto flex max-w-screen-2xl items-center justify-between p-5">

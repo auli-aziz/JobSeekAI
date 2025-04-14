@@ -1,19 +1,69 @@
 "use client";
 
-import Button from "~/components/Button";
-import Link from "next/link";
-import { GoogleSignInButton, LinkedInSignInButton } from "~/components/AuthButton";
+import Button from "~/components/Button"
+import Link from "next/link"
+import {
+  GoogleSignInButton,
+  LinkedInSignInButton,
+} from "~/components/AuthButton"
+import { useState } from "react"
+import { useRouter } from "next/navigation";
+
+type FormData = {
+  name: string;
+  email: string;
+  password: string;
+}
 
 export default function SignUpPage() {
+  const [form, setForm] = useState<FormData>({
+    name: "",
+    email: "",
+    password: "",
+  })
+  const [error, setError] = useState<string>("");
+  const router = useRouter()
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        body: JSON.stringify(form),
+        headers: { "Content-Type": "application/json" },
+      });
+    
+      const data = (await res.json()) as { error?: string }
+    
+      if (res.ok) {
+        alert("Successfully register account!")
+        setForm({ name: "", email: "", password: "" })
+        router.push("/signin")
+      } else {
+        setError(data.error ?? "Something went wrong")
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError("An unexpected error occurred")
+      }
+    }
+  };
 
   const inputClass =
-    "h-12 w-full rounded-md border border-gray-800 bg-background px-4 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary";
+    "h-12 w-full rounded-md border border-gray-800 bg-background px-4 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary";
 
   return (
     <div className="bg-background text-primary flex min-h-screen flex-col lg:flex-row">
       {/* Left Section */}
       <div className="relative hidden w-1/2 p-8 lg:block">
-        <div className="via-secondary h-full w-full overflow-hidden rounded-[40px] bg-gradient-to-b from-[#097fa5] to-transparent">
+        <div className="bg-span-bg h-full w-full overflow-hidden rounded-[40px]">
           <div className="flex h-full flex-col items-center justify-center px-8 text-center text-white">
             <h2 className="mb-6 text-4xl font-bold">Get Started with Us</h2>
             <p className="mb-12 text-lg">
@@ -23,8 +73,8 @@ export default function SignUpPage() {
             <div className="w-full max-w-sm space-y-4">
               {[
                 "Sign up your account",
+                "Set up your workspace",
                 "Set up your profile",
-                "Start finding jobs using AI",
               ].map((step, index) => (
                 <div
                   key={index}
@@ -49,10 +99,6 @@ export default function SignUpPage() {
       <div className="flex w-full items-center justify-center p-6 lg:w-1/2">
         <div className="w-full max-w-md rounded-[40px] p-12">
           <div className="mx-auto max-w-sm">
-            <h2 className="mb-2 text-3xl font-bold">Sign Up Account</h2>
-            <p className="text-secondary mb-8">
-              Enter your personal data to create your account.
-            </p>
 
             <div className="mb-8 grid gap-4">
               <GoogleSignInButton callback="/profile" />
@@ -68,31 +114,42 @@ export default function SignUpPage() {
               </div>
             </div>
 
-            <form className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2">
-                <input
-                  type="text"
-                  placeholder="Dollar"
-                  className={inputClass}
-                />
-                <input type="text" placeholder="Gill" className={inputClass} />
-              </div>
+            <form className="space-y-2" onSubmit={handleSubmit}>
+              <label>Full Name</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Dollar Gill"
+                className={inputClass}
+                value={form.name}
+                onChange={handleChange}
+              />
+              <label>Email</label>
               <input
                 type="email"
+                name="email"
                 placeholder="example@flowersandsaints.com.au"
                 className={inputClass}
+                value={form.email}
+                onChange={handleChange}
               />
+              <label>Password</label>
               <div>
                 <input
                   type="password"
+                  name="password"
                   placeholder="YourBestPassword"
                   className={inputClass}
+                  value={form.password}
+                  onChange={handleChange}
                 />
                 <p className="text-secondary mt-1 text-sm">
                   Must be at least 8 characters.
                 </p>
               </div>
-              <Button className="h-12 w-full">Sign Up</Button>
+              <Button className="h-12 w-full hover:cursor-pointer">Sign Up</Button>
+
+              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
               <p className="text-secondary text-center text-sm">
                 Already have an account?{" "}
@@ -105,5 +162,5 @@ export default function SignUpPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

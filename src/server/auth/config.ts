@@ -3,7 +3,8 @@ import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import LinkedInProvider from "next-auth/providers/linkedin";
-
+import bcrypt from "bcrypt";
+import { eq } from "drizzle-orm";
 import { db } from "~/server/db";
 import {
   accounts,
@@ -55,35 +56,43 @@ export const authConfig = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const { email, password } = credentials!;
+        const email = credentials?.email as string | undefined;
+        const password = credentials?.password as string | undefined;
 
-        // 1. Cari user berdasarkan email
-        const existingUser = await db.query.user.findFirst({
-          where: eq(user.email, email),
+        if (!email || !password) {
+          throw new Error("Missing email or password.");
+        }
+
+        // Find user
+        const existingUser = await db.query.users.findFirst({
+          where: eq(users.email, email),
         });
 
-        if (!existingUser) {
+        if (!existingUser || typeof existingUser.password !== "string") {
           throw new Error("Invalid email or password.");
         }
 
-        // 2. Verifikasi password
+        // Compare password
         const isValidPassword = await bcrypt.compare(
           password,
-          existingUser.password
+          existingUser.password,
         );
-
         if (!isValidPassword) {
           throw new Error("Invalid email or password.");
         }
 
-        // 3. Return user object
-        return { id: existingUser.id, name: existingUser.name, email, role: existingUser.role, emailVerified: existingUser.emailVerified};
+        return {
+          id: existingUser.id,
+          name: existingUser.name,
+          email: existingUser.email,
+          emailVerified: existingUser.emailVerified,
+        };
       },
     }),
   ],
   pages: {
-    signIn: '/signin', // Replace default sign-in page
-    newUser: '/profile' // New users will be directed here on first sign in (leave the property out if not of interest)
+    signIn: "/signin", // Replace default sign-in page
+    newUser: "/profile", // New users will be directed here on first sign in (leave the property out if not of interest)
   },
   adapter: DrizzleAdapter(db, {
     usersTable: users,
