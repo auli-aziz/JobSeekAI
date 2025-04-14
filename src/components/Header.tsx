@@ -22,7 +22,7 @@ export const Header = () => {
             <FaUserTie className="text-3xl" />
           </div>
           <strong className="text-primary text-lg select-none">
-            AIJobFind
+            JobSeekAI
           </strong>
         </div>
       </Link>
