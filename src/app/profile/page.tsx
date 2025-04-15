@@ -22,84 +22,83 @@ import {
   Search,
 } from "lucide-react"
 
+// Mock user data
+const user = {
+  name: "Alex Johnson",
+  title: "Senior Software Engineer",
+  location: "San Francisco, CA",
+  email: "alex.johnson@example.com",
+  phone: "+1 (555) 123-4567",
+  joinDate: "January 2020",
+  about:
+    "Passionate software engineer with 8+ years of experience building scalable web applications. Specialized in React, Node.js, and cloud architecture. Committed to writing clean, maintainable code and mentoring junior developers.",
+  skills: ["React", "TypeScript", "Node.js", "AWS", "GraphQL", "Docker", "CI/CD", "Agile"],
+  experience: [
+    {
+      id: 1,
+      role: "Senior Software Engineer",
+      company: "TechCorp Inc.",
+      period: "2020 - Present",
+      description:
+        "Lead developer for the company's flagship product. Architected and implemented major features that increased user engagement by 45%.",
+    },
+    {
+      id: 2,
+      role: "Software Engineer",
+      company: "WebSolutions",
+      period: "2017 - 2020",
+      description:
+        "Developed and maintained client-facing applications. Reduced load times by 30% through performance optimizations.",
+    },
+    {
+      id: 3,
+      role: "Junior Developer",
+      company: "StartupHub",
+      period: "2015 - 2017",
+      description:
+        "Worked on front-end development for various startup clients. Collaborated with designers to implement pixel-perfect UIs.",
+    },
+  ],
+  education: [
+    {
+      id: 1,
+      degree: "M.S. Computer Science",
+      institution: "Stanford University",
+      period: "2013 - 2015",
+    },
+    {
+      id: 2,
+      degree: "B.S. Computer Science",
+      institution: "University of California, Berkeley",
+      period: "2009 - 2013",
+    },
+  ],
+  certifications: [
+    {
+      id: 1,
+      name: "AWS Certified Solutions Architect",
+      issuer: "Amazon Web Services",
+      date: "2021",
+    },
+    {
+      id: 2,
+      name: "Professional Scrum Master I",
+      issuer: "Scrum.org",
+      date: "2019",
+    },
+  ],
+}
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("overview")
   const [searchTerm, setSearchTerm] = useState("")
 
-  // Mock user data
-  const user = {
-    name: "Alex Johnson",
-    title: "Senior Software Engineer",
-    location: "San Francisco, CA",
-    email: "alex.johnson@example.com",
-    phone: "+1 (555) 123-4567",
-    joinDate: "January 2020",
-    about:
-      "Passionate software engineer with 8+ years of experience building scalable web applications. Specialized in React, Node.js, and cloud architecture. Committed to writing clean, maintainable code and mentoring junior developers.",
-    skills: ["React", "TypeScript", "Node.js", "AWS", "GraphQL", "Docker", "CI/CD", "Agile"],
-    experience: [
-      {
-        id: 1,
-        role: "Senior Software Engineer",
-        company: "TechCorp Inc.",
-        period: "2020 - Present",
-        description:
-          "Lead developer for the company's flagship product. Architected and implemented major features that increased user engagement by 45%.",
-      },
-      {
-        id: 2,
-        role: "Software Engineer",
-        company: "WebSolutions",
-        period: "2017 - 2020",
-        description:
-          "Developed and maintained client-facing applications. Reduced load times by 30% through performance optimizations.",
-      },
-      {
-        id: 3,
-        role: "Junior Developer",
-        company: "StartupHub",
-        period: "2015 - 2017",
-        description:
-          "Worked on front-end development for various startup clients. Collaborated with designers to implement pixel-perfect UIs.",
-      },
-    ],
-    education: [
-      {
-        id: 1,
-        degree: "M.S. Computer Science",
-        institution: "Stanford University",
-        period: "2013 - 2015",
-      },
-      {
-        id: 2,
-        degree: "B.S. Computer Science",
-        institution: "University of California, Berkeley",
-        period: "2009 - 2013",
-      },
-    ],
-    certifications: [
-      {
-        id: 1,
-        name: "AWS Certified Solutions Architect",
-        issuer: "Amazon Web Services",
-        date: "2021",
-      },
-      {
-        id: 2,
-        name: "Professional Scrum Master I",
-        issuer: "Scrum.org",
-        date: "2019",
-      },
-    ],
-  }
-
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-background">
       {/* Main Content */}
       <div className="flex-1">
         {/* Header */}
-        <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <header className="sticky top-0 z-10 bg-background backdrop-blur-md border-b border-border-secondary">
           <div className="container px-4 py-4">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">Profile</h1>
@@ -119,7 +118,7 @@ export default function ProfilePage() {
 
         {/* Profile Overview */}
         <div className="container px-4 py-6">
-          <Card className="mb-6 border-slate-200">
+          <Card className="mb-6 border-border-primary">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
                 <Avatar className="h-24 w-24 border-2 border-white shadow-sm">
@@ -211,10 +210,6 @@ export default function ProfilePage() {
                   <h3 className="text-lg font-semibold mb-3">About</h3>
                   <p className="text-slate-600">{user.about}</p>
                 </CardContent>
-              </Card>
-
-              {/* Skills Section */}
-              <Card>
                 <CardContent className="p-6">
                   <div className="flex justify-between items-center mb-3">
                     <h3 className="text-lg font-semibold">Skills</h3>
