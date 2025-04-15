@@ -31,9 +31,9 @@ export const Header = () => {
       <div className="hidden items-center gap-5 md:flex">
         {/* Desktop Navigation (now beside ThemeSwitch) */}
         <nav className="mr-10 flex items-center gap-5">
-          <a href="">About</a>
-          <a href="">Jobs</a>
-          <a href="">Profile</a>
+          <Link href="">About</Link>
+          <Link href="">Jobs</Link>
+          <Link href="">Profile</Link>
         </nav>
 
         <ThemeSwitch />
@@ -42,7 +42,7 @@ export const Header = () => {
         ) : (
           <Link
             href="/signin"
-            className="bg-button-secondary text-secondary ring-secondary text-destructive inline-flex h-[34.5px] w-fit min-w-[95px] items-center justify-between gap-3 rounded px-2 py-2 text-sm ring-2"
+            className="bg-button-secondary text-secondary ring-secondary inline-flex h-[34.5px] w-fit min-w-[95px] items-center justify-between gap-3 rounded px-2 py-2 text-sm ring-2"
           >
             <span className="ml-2">Sign In</span>
             <FaSignInAlt />

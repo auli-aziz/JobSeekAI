@@ -1,7 +1,5 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
 
 @theme {
   --font-sans: var(--font-space-grotesk);
