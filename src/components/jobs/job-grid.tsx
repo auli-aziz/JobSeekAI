@@ -52,12 +52,12 @@ export default function JobGrid({ jobs }: JobGridProps) {
         {jobs.map((job) => (
           <Card
             key={job.id}
-            className="overflow-hidden hover:shadow-md transition-all border-slate-300 cursor-pointer"
+            className="overflow-hidden hover:shadow-md transition-all border-border-primary cursor-pointer"
             onClick={() => openJobDetail(job)}
           >
             <CardContent className="p-0">
               {/* Card Header */}
-              <div className="p-4 border-b border-slate-100 flex justify-between">
+              <div className="p-4 border-b border-border-secondary flex justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="h-10 w-10 rounded bg-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0">
                     {job.company_logo ? (
@@ -88,8 +88,8 @@ export default function JobGrid({ jobs }: JobGridProps) {
                 >
                   <Star
                     className="h-4 w-4"
-                    fill={savedJobs.has(job.id) ? "currentColor" : "none"}
-                    color={savedJobs.has(job.id) ? "#f59e0b" : "#94a3b8"}
+                    fill={savedJobs.has(job.id) ? "#e7e032" : "none"}
+                    color={savedJobs.has(job.id) ? "#f1c232" : "#94a3b8"}
                   />
                   <span className="sr-only">Save job</span>
                 </Button>
@@ -97,12 +97,12 @@ export default function JobGrid({ jobs }: JobGridProps) {
 
               {/* Card Body */}
               <div className="p-4">
-                <h3 className="font-semibold text-slate-900 mb-2 line-clamp-2">{job.title}</h3>
+                <h3 className="font-semibold mb-2 line-clamp-2">{job.title}</h3>
 
                 <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-sm text-slate-600">
+                  <div className="flex items-center text-sm">
                     <MapPin className="h-4 w-4 mr-2 text-slate-400 flex-shrink-0" />
-                    <span className="truncate">{job.candidate_required_location || "Location not specified"}</span>
+                    <span className="truncate text-slate-600">{job.candidate_required_location || "Location not specified"}</span>
                   </div>
 
                   {job.job_type && (
@@ -128,11 +128,11 @@ export default function JobGrid({ jobs }: JobGridProps) {
               </div>
 
               {/* Card Footer */}
-              <div className="px-4 py-3 border-t border-slate-100 bg-background flex justify-between items-center">
+              <div className="px-4 py-3 border-t border-border-secondary bg-background flex justify-between items-center">
                 <Badge variant="outline" className="bg-background">
                   {job.category}
                 </Badge>
-                <div className="text-xs text-slate-600 font-medium">View Details →</div>
+                <div className="text-xs font-medium">View Details →</div>
               </div>
             </CardContent>
           </Card>
