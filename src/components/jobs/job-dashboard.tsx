@@ -8,7 +8,7 @@ import { Input } from "../ui/input"
 import { Badge } from "../ui/badge"
 import { Search, Briefcase, FilterIcon, X, RefreshCw, LayoutList, LayoutGrid } from "lucide-react"
 import { Skeleton } from "../ui/skeleton"
-import JobList from "./job-list"
+import JobListing from "./job-list"
 import JobGrid from "./job-grid"
 import FilterSidebar from "./filter-sidebar"
 import { useDebounce } from "~/hooks/use-debounce"
@@ -322,7 +322,7 @@ export default function JobDashboard() {
             viewMode === "grid" ? (
               <JobGrid jobs={filteredJobs} />
             ) : (
-              <JobList jobs={filteredJobs} />
+              <JobListing jobs={filteredJobs} />
             )}
         </div>
       </div>
