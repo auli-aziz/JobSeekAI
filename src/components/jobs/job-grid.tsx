@@ -52,7 +52,7 @@ export default function JobGrid({ jobs }: JobGridProps) {
         {jobs.map((job) => (
           <Card
             key={job.id}
-            className="overflow-hidden hover:shadow-md transition-all border-slate-200 cursor-pointer"
+            className="overflow-hidden hover:shadow-md transition-all border-slate-300 cursor-pointer"
             onClick={() => openJobDetail(job)}
           >
             <CardContent className="p-0">
@@ -128,8 +128,8 @@ export default function JobGrid({ jobs }: JobGridProps) {
               </div>
 
               {/* Card Footer */}
-              <div className="px-4 py-3 border-t border-slate-100 bg-slate-50 flex justify-between items-center">
-                <Badge variant="outline" className="bg-white">
+              <div className="px-4 py-3 border-t border-slate-100 bg-background flex justify-between items-center">
+                <Badge variant="outline" className="bg-background">
                   {job.category}
                 </Badge>
                 <div className="text-xs text-slate-600 font-medium">View Details →</div>

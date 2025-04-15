@@ -31,9 +31,9 @@ export const Header = () => {
       <div className="hidden items-center gap-5 md:flex">
         {/* Desktop Navigation (now beside ThemeSwitch) */}
         <nav className="mr-10 flex items-center gap-5">
-          <Link href="">About</Link>
-          <Link href="">Jobs</Link>
-          <Link href="">Profile</Link>
+          <Link href="/about">About</Link>
+          <Link href="/jobs">Jobs</Link>
+          <Link href="/profile">Profile</Link>
         </nav>
 
         <ThemeSwitch />

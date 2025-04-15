@@ -60,7 +60,7 @@ export default function ThemeSwitch() {
         <FiSun />
       </Button>
       {isOpen && (
-        <div className="bg-dropdown absolute right-0 mt-2 w-full origin-top-right rounded-md shadow-lg">
+        <div className="bg-dropdown absolute right-0 mt-2 w-full origin-top-right rounded-md shadow-lg z-20">
           <div
             className="py-1"
             role="menu"

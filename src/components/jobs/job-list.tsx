@@ -134,7 +134,7 @@ export default function JobList({ jobs }: JobListProps) {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mt-3">
-                    <Badge variant="outline" className="bg-white">
+                    <Badge variant="outline" className="bg-background">
                       {job.category}
                     </Badge>
                   </div>

@@ -126,7 +126,7 @@ export default function JobDashboard() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen h-full bg-background">
       {/* Filter Sidebar */}
       <FilterSidebar
         open={sidebarOpen}
@@ -147,7 +147,7 @@ export default function JobDashboard() {
       {/* Main Content */}
       <div className="flex-1">
         {/* Sticky Header */}
-        <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <header className="top-0 z-10 bg-background backdrop-blur-md border-b border-t border-slate-300">
           <div className="container px-4 py-4">
             <div className="mb-4">
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">Remote Jobs</h1>
@@ -208,7 +208,7 @@ export default function JobDashboard() {
 
         {/* Active Filters Display */}
         {activeFilterCount > 0 && (
-          <div className="bg-slate-50 border-b border-slate-100">
+          <div className="bg-background border-b border-slate-200">
             <div className="container px-4 py-2 flex flex-wrap items-center gap-2">
               <span className="text-xs text-slate-500">Active filters:</span>
               {category !== "software-dev" && (
@@ -266,7 +266,7 @@ export default function JobDashboard() {
         )}
 
         {/* Results Count */}
-        <div className="container px-4 py-3 border-b border-slate-100">
+        <div className="container px-4 py-3 bg-background border-b border-slate-100">
           <div className="flex items-center justify-between">
             <div className="text-sm text-slate-500">
               {isLoading ? (
@@ -289,7 +289,7 @@ export default function JobDashboard() {
         </div>
 
         {/* Job Listings */}
-        <div className="container px-4 py-6">
+        <div className="container px-4 py-6 bg-background">
           {isLoading ? (
             // Loading state
             <div
