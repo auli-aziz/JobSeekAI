@@ -8,7 +8,7 @@ import Button from "./Button";
 export default function ThemeSwitch() {
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { setTheme, theme } = useTheme();
+  const { setTheme, themes, theme } = useTheme();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => setMounted(true), []);
@@ -67,7 +67,7 @@ export default function ThemeSwitch() {
             aria-orientation="vertical"
             aria-labelledby="options-menu"
           >
-            {["light", "dark", "system"].map((themeItem) => (
+            {themes.map((themeItem) => (
               <button
                 key={themeItem}
                 onClick={() => {

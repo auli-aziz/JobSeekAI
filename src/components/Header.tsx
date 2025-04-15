@@ -2,13 +2,16 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import ThemeSwitch from "./ThemeSwitch";
+import { useSession } from "next-auth/react";
+import { SignOutButton } from "./AuthButton";
 import { FaUserTie } from "react-icons/fa6";
 import { FaSignInAlt } from "react-icons/fa";
 import { FaBars, FaTimes } from "react-icons/fa";
-import ThemeSwitch from "./ThemeSwitch";
 
 export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: session } = useSession();
 
   return (
     <header className="relative mx-auto flex max-w-screen-2xl items-center justify-between p-5">
@@ -19,7 +22,7 @@ export const Header = () => {
             <FaUserTie className="text-3xl" />
           </div>
           <strong className="text-primary text-lg select-none">
-            AIJobFind
+            JobSeekAI
           </strong>
         </div>
       </Link>
@@ -34,13 +37,17 @@ export const Header = () => {
         </nav>
 
         <ThemeSwitch />
-        <Link
-          href="/signin"
-          className="bg-button-secondary text-secondary ring-secondary text-destructive inline-flex h-[34.5px] w-fit min-w-[95px] items-center justify-between gap-3 rounded px-2 py-2 text-sm ring-2"
-        >
-          <span className="ml-2">Sign In</span>
-          <FaSignInAlt />
-        </Link>
+        {session ? (
+          <SignOutButton />
+        ) : (
+          <Link
+            href="/signin"
+            className="bg-button-secondary text-secondary ring-secondary text-destructive inline-flex h-[34.5px] w-fit min-w-[95px] items-center justify-between gap-3 rounded px-2 py-2 text-sm ring-2"
+          >
+            <span className="ml-2">Sign In</span>
+            <FaSignInAlt />
+          </Link>
+        )}
       </div>
 
       {/* Mobile menu toggle */}
@@ -60,9 +67,17 @@ export const Header = () => {
           <a href="">About</a>
           <a href="">Jobs</a>
           <a href="">Profile</a>
-          <Link href="/">
-            <span className="text-button">Sign In</span>
-          </Link>
+          {session ? (
+            <SignOutButton />
+          ) : (
+            <Link
+              href="/signin"
+              className="bg-button-secondary text-secondary ring-secondary text-destructive inline-flex h-[34.5px] w-fit min-w-[95px] items-center justify-between gap-3 rounded px-2 py-2 text-sm ring-2"
+            >
+              <span className="ml-2">Sign In</span>
+              <FaSignInAlt />
+            </Link>
+          )}
         </div>
       )}
     </header>
