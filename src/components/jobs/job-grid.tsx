@@ -4,6 +4,7 @@ import type React from "react"
 
 import { Card, CardContent } from "../ui/card"
 import Image from "next/image"
+import Link from "next/link"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
 import { Dialog, DialogContent } from "../ui/dialog"
@@ -132,7 +133,7 @@ export default function JobGrid({ jobs }: JobGridProps) {
                 <Badge variant="outline" className="bg-background">
                   {job.category}
                 </Badge>
-                <div className="text-xs font-medium">View Details →</div>
+                <Link href={`/jobs/${job.id}`} className="text-xs font-medium">View Details →</Link>
               </div>
             </CardContent>
           </Card>
