@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Skeleton } from "~/components/ui/skeleton"
 import { Building, ExternalLink } from "lucide-react"
+import { Skeleton } from "~/components/ui/skeleton"
 import { Button } from "~/components/ui/button"
 import type { Job, JobsResponse } from "~/types/jobs"
 import Image from "next/image"
@@ -90,7 +90,7 @@ export default function RelatedJobs({ currentJobId, category }: RelatedJobsProps
               )}
             </div>
             <div>
-              <h3 className="font-medium text-sm group-hover:text-primary transition-colors line-clamp-2">
+              <h3 className="font-medium text-sm group-hover:text-slate-500 transition-colors line-clamp-2 text-slate-700">
                 {job.title}
               </h3>
               <p className="text-xs text-slate-500 mt-1">{job.company_name}</p>
@@ -101,7 +101,7 @@ export default function RelatedJobs({ currentJobId, category }: RelatedJobsProps
 
       <Button
         variant="link"
-        className="w-full text-sm text-primary"
+        className="w-full text-sm"
         onClick={() => router.push(`/?category=${category}`)}
       >
         View all {category} jobs

@@ -46,7 +46,7 @@ export default function MatchScore({ score, size = "md", showLabel = true }: Mat
 
       {showLabel && (
         <div className="mt-1 flex items-center gap-1">
-          <span className={`font-medium ${fontSize} text-slate-700`}>Match</span>
+          <span className={`font-medium ${fontSize}`}>Match</span>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
