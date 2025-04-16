@@ -1,5 +1,5 @@
 "use client"
-import { useActionState, startTransition } from 'react'
+import { useActionState, startTransition, useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { ingestJobs } from '~/server/scripts/ingest-jobs'
 import { Loader2, CheckCircle, XCircle, RefreshCw } from 'lucide-react'
@@ -23,7 +23,23 @@ const initialState = {
 
 export default function Page() {
   const [ingestState, ingestAction, ingestIsPending] = useActionState(ingestJobs, initialState)
-  const url = "https://remotive.com/api/remote-jobs?limit=20"
+  const [url, setUrl] = useState("https://remotive.com/api/remote-jobs?limit=10")
+  const [isValidUrl, setIsValidUrl] = useState(true)
+
+  const validateUrl = (value: string) => {
+    try {
+      new URL(value)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newUrl = e.target.value
+    setUrl(newUrl)
+    setIsValidUrl(validateUrl(newUrl))
+  }
   const handleIngest = async () => {
     startTransition(() => {
       ingestAction(url)
@@ -41,12 +57,26 @@ export default function Page() {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <Database className="h-5 w-5 text-muted-foreground" />
-            <div className="text-sm text-muted-foreground">API Endpoint: {url}</div>
-          </div>
-
-          {ingestIsPending && (
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <Database className="h-5 w-5 text-muted-foreground" />
+              <label htmlFor="api-url" className="text-sm font-medium">
+                API Endpoint
+              </label>
+            </div>
+            <div className="flex space-x-2">
+              <input
+                id="api-url"
+                type="url"
+                value={url}
+                onChange={handleUrlChange}
+                placeholder="Enter API URL"
+                className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${!isValidUrl && url ? "border-red-500" : ""}`}
+                disabled={ingestIsPending}
+              />
+            </div>
+            {!isValidUrl && url && <p className="text-xs text-red-500">Please enter a valid URL</p>}
+          </div>          {ingestIsPending && (
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Processing jobs...</span>
