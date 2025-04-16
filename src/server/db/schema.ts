@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { index, pgTableCreator, primaryKey, serial, text, timestamp, vector, integer } from "drizzle-orm/pg-core";
+import { index, pgTableCreator, primaryKey, serial, text, timestamp, vector, integer, varchar } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
 /**
@@ -107,6 +107,9 @@ export const verificationTokens = createTable(
   }),
   (t) => [primaryKey({ columns: [t.identifier, t.token] })],
 );
+
+
+
 //Job list with embedding vector
 export const jobList = createTable("job_list", {
   id: serial("id").primaryKey(),
@@ -123,3 +126,14 @@ export const jobList = createTable("job_list", {
   description: text("description"),
   embedding: vector("embedding", { dimensions: 1536 }), // text-embedding-3-small dimesion = 1536
 });
+
+//Resume embedding vector
+export const resumeVector = createTable("resume_vector", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id", { length: 255 })
+    .notNull()
+    .references(() => users.id),
+  embeddingText: text("embedding_text"),
+  embedding: vector('embedding', { dimensions: 1536 }),
+  createdAt: timestamp('created_at').defaultNow(),
+})
