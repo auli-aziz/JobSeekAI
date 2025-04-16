@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     // eslint-disable-next-line prefer-const
     let filterConditions = [];
     if (category && category.trim() !== '') {
-      filterConditions.push(`category = '${category}'`);
+      filterConditions.push(`category ILIKE '${category}'`);
     }
 
     if (jobType && jobType.trim() !== '') {

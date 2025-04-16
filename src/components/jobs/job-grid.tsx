@@ -115,8 +115,7 @@ export default function JobGrid({ jobs }: JobGridProps) {
                     <div className="flex items-center text-sm">
                       <MapPin className="mr-2 h-4 w-4 flex-shrink-0 text-slate-400" />
                       <span className="truncate text-slate-600">
-                        {job.candidate_required_location ||
-                          "Location not specified"}
+                        {job.candidate_required_location ?? "Location not specified"}
                       </span>
                     </div>
 
