@@ -3,7 +3,6 @@
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
 import { ScrollArea } from "../ui/scroll-area"
-import { Separator } from "../ui/separator"
 import { ExternalLink, MapPin, Briefcase, DollarSign, Building } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import type { Job } from "~/types/jobs"
