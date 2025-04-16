@@ -2,7 +2,7 @@
 import { useActionState, startTransition, useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { ingestJobs } from '~/server/scripts/ingest-jobs'
-import { Loader2, CheckCircle, XCircle, RefreshCw } from 'lucide-react'
+import { CheckCircle, XCircle, RefreshCw } from 'lucide-react'
 import { Database } from 'lucide-react'
 import { Card, CardTitle, CardHeader, CardDescription, CardContent, CardFooter } from '~/components/ui/card'
 import { Badge } from '~/components/ui/badge'
@@ -121,8 +121,8 @@ export default function Page() {
           >
             {ingestIsPending ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Ingesting Jobs...
+                <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                Ingest Job
               </>
             ) : (
               <>
