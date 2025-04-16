@@ -12,7 +12,8 @@ const globalForDb = globalThis as unknown as {
   conn: postgres.Sql | undefined;
 };
 
-const conn = globalForDb.conn ?? postgres(env.DATABASE_URL);
+
+const conn = globalForDb.conn ?? postgres(env.DATABASE_URL, { ssl: true }); //ssl true will be deleted at prod
 if (env.NODE_ENV !== "production") globalForDb.conn = conn;
 
 export const db = drizzle(conn, { schema });

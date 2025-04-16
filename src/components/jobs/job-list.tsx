@@ -17,7 +17,7 @@ interface JobListProps {
   jobs: Job[]
 }
 
-export default function JobList({ jobs }: JobListProps) {
+export default function JobListing({ jobs }: JobListProps) {
   const [savedJobs, setSavedJobs] = useState<Set<number>>(new Set())
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
