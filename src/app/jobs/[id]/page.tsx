@@ -22,6 +22,7 @@ import JobCompatibility from "~/components/jobs/job-compatibility";
 import RelatedJobs from "~/components/jobs/related-jobs";
 import MatchScore from "~/components/jobs/match-score";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function JobDetailsPage() {
   const params = useParams();
@@ -150,10 +151,12 @@ export default function JobDetailsPage() {
                 <Share2 className="mr-2 h-4 w-4" />
                 Share
               </Button>
-              <Button variant="secondary" size="sm" onClick={() => window.open(job.url, "_blank")}>
-                Apply Now
-                <ExternalLink className="ml-2 h-4 w-4" />
-              </Button>
+              <Link href={job.url ?? ""}>
+                <Button variant="secondary" size="sm">
+                  Apply Now
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -189,7 +192,7 @@ export default function JobDetailsPage() {
               <div className="mt-4 flex flex-wrap gap-2">
                 <Badge variant="outline" className="flex items-center gap-1">
                   <MapPin className="h-3 w-3" />
-                  {job.candidate_required_location || "Location not specified"}
+                  {job.candidate_required_location ?? "Location not specified"}
                 </Badge>
 
                 {job.job_type && (
@@ -227,7 +230,7 @@ export default function JobDetailsPage() {
                 <TabsContent value="description" className="pt-6">
                   <div
                     className="prose prose-slate max-w-none text-slate-600"
-                    dangerouslySetInnerHTML={{ __html: job.description }}
+                    dangerouslySetInnerHTML={{ __html: job.description ?? "" }}
                   />
                 </TabsContent>
 
@@ -253,14 +256,16 @@ export default function JobDetailsPage() {
                 connect with {job.company_name}.
               </p>
               <div className="space-y-3">
-                <Button
-                  variant="secondary"
-                  className="w-full"
-                  onClick={() => window.open(job.url, "_blank")}
-                >
-                  Apply on Company Website
-                  <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
+                <Link href={job.url ?? ""}>
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                  >
+                    Apply on Company Website
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+
+                </Link>
                 <Button variant="outline" className="w-full">
                   <FileText className="mr-2 h-4 w-4" />
                   Update Resume
@@ -298,7 +303,7 @@ export default function JobDetailsPage() {
             {/* Related Jobs */}
             <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-lg text-button font-semibold">Similar Jobs</h2>
-              <RelatedJobs currentJobId={job.id} category={job.category} />
+              <RelatedJobs currentJobId={job.id} category={job.category ?? "unspecified"} />
             </div>
           </div>
         </div>
