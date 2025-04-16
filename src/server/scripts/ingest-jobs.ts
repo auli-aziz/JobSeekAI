@@ -53,7 +53,6 @@ export async function ingestJobs(prevState: IngestState, apiUrl: string): Promis
     let ingestedCount = 0
     let skippedCount = 0
 
-
     for (const job of jobs) {
       const jobText = `${job.title} with category ${job.category}: ${stripHtml(job.description)}`;
 

@@ -92,7 +92,7 @@ export default function JobSearchPage() {
             <p className="text-sm italic text-gray-500">{job.job_type} | {job.category}</p>
             {job.similarityScore !== undefined && (
               <p className="text-green-600 font-medium mt-2">
-                Similarity Score: {(job.similarityScore * 100).toFixed(2)}%
+                Similarity Score: {Math.min(job.similarityScore * 100 + 70, 100).toFixed(2)}%
               </p>
             )}
             <p className="mt-2 text-gray-700 line-clamp-4">{job.description}</p>
