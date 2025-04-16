@@ -20,7 +20,7 @@ interface CompatibilityItem {
 }
 
 export default function JobCompatibility({ job, matchScore }: JobCompatibilityProps) {
-  const [activeTab, setActiveTab] = useState<"overview" | "skills" | "experience">("overview")
+  const [activeTab, setActiveTab] = useState<string>("overview")
 
   // Generate dummy compatibility data based on job
   const generateCompatibilityData = (job: Job): CompatibilityItem[] => {
@@ -151,7 +151,7 @@ export default function JobCompatibility({ job, matchScore }: JobCompatibilityPr
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)}>
         <TabsList className="grid grid-cols-3">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="skills">Skills</TabsTrigger>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { Button } from "~/components/ui/button"
 import { Badge } from "~/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
@@ -14,7 +14,8 @@ import RelatedJobs from "~/components/jobs/related-jobs"
 import MatchScore from "~/components/jobs/match-score"
 import Image from "next/image"
 
-export default function JobDetailsPage({ params }: { params: { id: string } }) {
+export default function JobDetailsPage() {
+  const params = useParams()
   const router = useRouter()
   const [job, setJob] = useState<Job | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -49,7 +50,7 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
       }
     }
 
-    fetchJob()
+    void fetchJob()
   }, [params.id])
 
   // Generate a consistent but random-looking match score based on job ID
@@ -68,7 +69,7 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
     }
   }
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (navigator.share) {
       navigator
         .share({
@@ -79,7 +80,7 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
         .catch((err) => console.error("Error sharing:", err))
     } else {
       // Fallback for browsers that don't support the Web Share API
-      navigator.clipboard.writeText(window.location.href)
+      await navigator.clipboard.writeText(window.location.href)
       alert("Link copied to clipboard!")
     }
   }
@@ -238,6 +239,8 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
                       src={job.company_logo}
                       alt={`${job.company_name} logo`}
                       className="h-full w-full object-contain"
+                      width={48}
+                      height={48}
                     />
                   ) : (
                     <Building className="h-6 w-6 text-slate-400" />

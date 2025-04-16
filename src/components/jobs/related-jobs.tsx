@@ -45,7 +45,7 @@ export default function RelatedJobs({ currentJobId, category }: RelatedJobsProps
       }
     }
 
-    fetchRelatedJobs()
+    void fetchRelatedJobs()
   }, [currentJobId, category])
 
   if (isLoading) {
@@ -82,6 +82,8 @@ export default function RelatedJobs({ currentJobId, category }: RelatedJobsProps
                   src={job.company_logo}
                   alt={`${job.company_name} logo`}
                   className="h-full w-full object-contain"
+                  width={48}
+                  height={48}
                 />
               ) : (
                 <Building className="h-5 w-5 text-slate-400" />
