@@ -8,7 +8,7 @@ import { Input } from "../ui/input"
 import { Badge } from "../ui/badge"
 import { Search, Briefcase, FilterIcon, X, RefreshCw, LayoutList, LayoutGrid } from "lucide-react"
 import { Skeleton } from "../ui/skeleton"
-import JobList from "./job-list"
+import JobListing from "./job-list"
 import JobGrid from "./job-grid"
 import FilterSidebar from "./filter-sidebar"
 import { useDebounce } from "~/hooks/use-debounce"
@@ -146,18 +146,18 @@ export default function JobDashboard() {
 
       {/* Main Content */}
       <div className="flex-1">
-        {/* Sticky Header */}
-        <header className="top-0 z-10 bg-background backdrop-blur-md border-b border-t border-slate-300">
+        {/* Header */}
+        <header className="top-0 z-10 bg-background backdrop-blur-md border-b border-t border-border-primary">
           <div className="container px-4 py-4">
             <div className="mb-4">
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900">Remote Jobs</h1>
-              <p className="text-sm text-slate-500">Find your next remote opportunity from top companies</p>
+              <h1 className="text-2xl font-bold tracking-tight">Remote Jobs</h1>
+              <p className="text-sm text-text-secondary">Find your next remote opportunity from top companies</p>
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row">
               {/* Search Bar */}
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
                 <Input
                   value={searchTerm}
                   onChange={handleSearchChange}
@@ -177,7 +177,7 @@ export default function JobDashboard() {
                     </Badge>
                   )}
                 </Button>
-                <div className="flex items-center bg-slate-100 rounded-md">
+                <div className="flex items-center bg-background-secondary rounded-md">
                   <Button
                     variant={viewMode === "grid" ? "secondary" : "ghost"}
                     size="sm"
@@ -208,7 +208,7 @@ export default function JobDashboard() {
 
         {/* Active Filters Display */}
         {activeFilterCount > 0 && (
-          <div className="bg-background border-b border-slate-200">
+          <div className="bg-background border-b border-border-secondary">
             <div className="container px-4 py-2 flex flex-wrap items-center gap-2">
               <span className="text-xs text-slate-500">Active filters:</span>
               {category !== "software-dev" && (
@@ -266,16 +266,16 @@ export default function JobDashboard() {
         )}
 
         {/* Results Count */}
-        <div className="container px-4 py-3 bg-background border-b border-slate-100">
+        <div className="container px-4 py-3 bg-background border-b border-border-secondary">
           <div className="flex items-center justify-between">
-            <div className="text-sm text-slate-500">
+            <div className="text-sm">
               {isLoading ? (
                 "Loading jobs..."
               ) : error ? (
                 "Error loading jobs"
               ) : (
                 <>
-                  <span className="font-medium text-slate-700">{filteredJobs.length}</span> jobs found
+                  <span className="font-medium">{filteredJobs.length}</span> jobs found
                 </>
               )}
             </div>
@@ -312,7 +312,7 @@ export default function JobDashboard() {
             </div>
           ) : filteredJobs.length === 0 ? (
             // No results state
-            <div className="text-center p-10 border border-slate-200 rounded-lg">
+            <div className="text-center p-10 border border-border-secondary rounded-lg">
               <Briefcase className="h-12 w-12 mx-auto text-slate-300 mb-4" />
               <h3 className="text-lg font-medium text-slate-900 mb-1">No jobs found</h3>
               <p className="text-slate-500 mb-4">Try changing your search or filters</p>
@@ -322,7 +322,7 @@ export default function JobDashboard() {
             viewMode === "grid" ? (
               <JobGrid jobs={filteredJobs} />
             ) : (
-              <JobList jobs={filteredJobs} />
+              <JobListing jobs={filteredJobs} />
             )}
         </div>
       </div>

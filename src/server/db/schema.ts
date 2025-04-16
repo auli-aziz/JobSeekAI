@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { index, pgTableCreator, primaryKey, serial, text, timestamp, vector } from "drizzle-orm/pg-core";
+import { index, pgTableCreator, primaryKey, serial, text, timestamp, vector, integer } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
 /**
@@ -110,7 +110,7 @@ export const verificationTokens = createTable(
 //Job list with embedding vector
 export const jobList = createTable("job_list", {
   id: serial("id").primaryKey(),
-  jobId: text("job_id").notNull().unique(),
+  jobId: integer("job_id").notNull().unique(),
   title: text("title").notNull(),
   companyName: text("company_name").notNull(),
   companyLogo: text("company_logo"),

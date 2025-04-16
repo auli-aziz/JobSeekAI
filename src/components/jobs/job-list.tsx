@@ -17,7 +17,7 @@ interface JobListProps {
   jobs: Job[]
 }
 
-export default function JobList({ jobs }: JobListProps) {
+export default function JobListing({ jobs }: JobListProps) {
   const [savedJobs, setSavedJobs] = useState<Set<number>>(new Set())
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -52,7 +52,7 @@ export default function JobList({ jobs }: JobListProps) {
         {jobs.map((job) => (
           <Card
             key={job.id}
-            className="overflow-hidden hover:shadow-md transition-all border-slate-200 cursor-pointer"
+            className="overflow-hidden hover:shadow-md transition-all border-border-primary cursor-pointer"
             onClick={() => openJobDetail(job)}
           >
             <CardContent className="p-4">
@@ -77,7 +77,7 @@ export default function JobList({ jobs }: JobListProps) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-semibold text-slate-900">{job.title}</h3>
+                      <h3 className="font-semibold">{job.title}</h3>
                       <p className="text-slate-600 text-sm mt-1">{job.company_name}</p>
                     </div>
 

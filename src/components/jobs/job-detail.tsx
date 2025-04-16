@@ -30,9 +30,11 @@ export default function JobDetail({ job }: JobDetailProps) {
           <div className="h-12 w-12 rounded bg-slate-100 flex items-center justify-center overflow-hidden">
             {job.company_logo ? (
               <Image
-                src={job.company_logo || "/placeholder.svg"}
+                src={job.company_logo}
                 alt={job.company_name}
                 className="h-full w-full object-contain"
+                width={40}
+                height={40}
               />
             ) : (
               <Building className="h-6 w-6 text-slate-400" />
@@ -40,7 +42,7 @@ export default function JobDetail({ job }: JobDetailProps) {
           </div>
           <div>
             <DialogTitle className="text-xl leading-tight">{job.title}</DialogTitle>
-            <DialogDescription className="text-slate-600 text-sm mt-1">
+            <DialogDescription className=" text-sm mt-1">
               {job.company_name} · Posted {formatDate(job.publication_date)}
             </DialogDescription>
           </div>
@@ -68,15 +70,13 @@ export default function JobDetail({ job }: JobDetailProps) {
         </div>
       </DialogHeader>
 
-      <Separator className="my-4" />
-
       <ScrollArea className="h-[calc(70vh-180px)] pr-4">
         <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: job.description }} />
       </ScrollArea>
 
       <div className="mt-6 flex justify-end gap-2">
         <Button variant="outline">Close</Button>
-        <Button onClick={() => window.open(job.url, "_blank")}>
+        <Button onClick={() => window.open(job.url, "_blank")} className="bg-secondary">
           Apply Now
           <ExternalLink className="h-4 w-4 ml-2" />
         </Button>

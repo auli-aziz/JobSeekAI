@@ -93,12 +93,12 @@ export default function FilterSidebar({
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-40 w-[300px] border-r border-t border-slate-300 transition-transform lg:translate-x-0 lg:relative overflow-y-auto",
+          "fixed top-0 left-0 z-40 w-[300px] border-r border-t border-border-primary bg-background transition-transform lg:translate-x-0 lg:relative overflow-y-auto lg:h-auto h-screen",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex items-center justify-between p-4 border-b border-slate-200">
-          <h2 className="font-semibold text-slate-900">Filter Jobs</h2>
+        <div className="flex items-center justify-between p-4 border-b border-border-secondary">
+          <h2 className="font-semibold">Filter Jobs</h2>
           <Button variant="ghost" size="sm" onClick={onClose} className="lg:hidden">
             <X className="h-4 w-4" />
           </Button>
@@ -170,7 +170,7 @@ export default function FilterSidebar({
             <Switch id="salary-filter" checked={showSalaryOnly} onCheckedChange={setShowSalaryOnly} />
           </div>
 
-          <div className="pt-6 border-t border-slate-200">
+          <div className="pt-6 border-t border-border-secondary">
             <Button variant="outline" className="w-full" onClick={resetFilters}>
               Reset Filters
             </Button>
