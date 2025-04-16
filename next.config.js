@@ -15,7 +15,7 @@ const config = {
         pathname: "/job/**"
       },
     ],
-  }
+  },
 };
 
 export default config;
