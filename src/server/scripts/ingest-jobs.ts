@@ -13,7 +13,6 @@ const openai = createOpenAI({
   apiKey: env.EMBEDDED_OPENAI_KEY,
 });
 
-
 // Initial state type
 type IngestState = {
   success: boolean
@@ -54,7 +53,7 @@ export async function ingestJobs(prevState: IngestState, apiUrl: string): Promis
     let skippedCount = 0
 
     for (const job of jobs) {
-      const jobText = `${job.title} with category ${job.category}: ${stripHtml(job.description)}`;
+      const jobText = `${job.title} with category ${job.category}: ${stripHtml(job.description ?? "")}`;
 
       const existing = await db
         .select()

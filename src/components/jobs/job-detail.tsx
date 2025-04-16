@@ -50,7 +50,7 @@ export default function JobDetail({ job }: JobDetailProps) {
         <div className="flex flex-wrap gap-2">
           <Badge variant="outline" className="flex gap-1 items-center">
             <MapPin className="h-3 w-3" />
-            {job.candidate_required_location || "Location not specified"}
+            {job.candidate_required_location ?? "Location not specified"}
           </Badge>
 
           {job.job_type && (
@@ -70,12 +70,12 @@ export default function JobDetail({ job }: JobDetailProps) {
       </DialogHeader>
 
       <ScrollArea className="h-[calc(70vh-180px)] pr-4">
-        <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: job.description }} />
+        <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: job.description ?? "" }} />
       </ScrollArea>
 
       <div className="mt-6 flex justify-end gap-2">
         <Button variant="outline">Close</Button>
-        <Button onClick={() => window.open(job.url, "_blank")} className="bg-secondary">
+        <Button className="bg-secondary">
           Apply Now
           <ExternalLink className="h-4 w-4 ml-2" />
         </Button>

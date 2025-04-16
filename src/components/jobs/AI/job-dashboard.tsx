@@ -3,18 +3,23 @@
 import type React from "react"
 
 import { useState, useCallback, useEffect } from "react"
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
-import { Badge } from "../ui/badge"
-import { Search, Briefcase, FilterIcon, X, RefreshCw, LayoutList, LayoutGrid } from "lucide-react"
-import { Skeleton } from "../ui/skeleton"
+import { Button } from "~/components/ui/button"
+import { Input } from "~/components/ui/input"
+import { Badge } from "~/components/ui/badge"
+import { Search, Briefcase, FilterIcon, X, RefreshCw, LayoutList, LayoutGrid, FileText } from "lucide-react"
+import { Skeleton } from "~/components/ui/skeleton"
 import JobListing from "./job-list"
 import JobGrid from "./job-grid"
 import FilterSidebar from "./filter-sidebar"
 import { useDebounce } from "~/hooks/use-debounce"
 import { cn } from "~/lib/utils"
 import type { Job } from "~/types/jobs"
-import { type JobsResponse } from "~/types/jobs"
+import { Switch } from "~/components/ui/switch"
+
+// Type to match our custom API response
+type ApiJobsResponse = {
+  jobs: Job[];
+};
 
 export default function JobDashboard() {
   // State
@@ -25,13 +30,17 @@ export default function JobDashboard() {
 
   const [searchTerm, setSearchTerm] = useState("")
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("")
-  const [category, setCategory] = useState("software-dev")
-  const [debouncedCompanyName, setDebouncedCompanyName] = useState("")
+  const [category, setCategory] = useState("")
   const [jobType, setJobType] = useState("all")
   const [location, setLocation] = useState("all")
   const [showSalaryOnly, setShowSalaryOnly] = useState(false)
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [useResumeMatch, setUseResumeMatch] = useState(false)
+  const [companyName, setCompanyName] = useState("")
+
+  // Dummy user ID for resume matching demo
+  const dummyUserId = "402c091e-db8c-45f4-9b31-a5f13260ef96"
 
   // Debounce search terms
   const debouncedSearch = useDebounce((value: string) => {
@@ -43,8 +52,7 @@ export default function JobDashboard() {
     debouncedSearch(e.target.value)
   }
 
-
-  // Fetch jobs from API
+  // Fetch jobs from our custom API
   const fetchJobs = useCallback(async () => {
     try {
       setIsLoading(true)
@@ -52,44 +60,58 @@ export default function JobDashboard() {
 
       // Build query parameters for API
       const params = new URLSearchParams()
-      params.append("category", category)
-      if (debouncedSearchTerm) params.append("search", debouncedSearchTerm)
-      if (debouncedCompanyName) params.append("company_name", debouncedCompanyName)
-      params.append("limit", "100") // Get a reasonable number of jobs
 
-      const response = await fetch(`https://remotive.com/api/remote-jobs?${params.toString()}`)
+      // Search term will be handled by backend search
+      if (debouncedSearchTerm) params.append("search", debouncedSearchTerm)
+
+      // Add category filter
+      if (category && category !== "all-others") params.append("category", category)
+
+      // Add job type filter
+      if (jobType && jobType !== "all") params.append("jobType", jobType)
+
+      // Add location filter
+      if (location && location !== "all") params.append("location", location)
+
+      // Add company name filter
+      if (companyName) params.append("companyName", companyName)
+
+      // Add user ID for resume matching
+      if (useResumeMatch) params.append("userId", dummyUserId)
+
+      // Add limit
+      params.append("limit", "50")
+
+      console.log("Fetching jobs with params:", Object.fromEntries(params.entries()))
+
+      const response = await fetch(`/api/jobs?${params.toString()}`)
 
       if (!response.ok) {
         throw new Error("Failed to fetch jobs")
       }
 
-      const data = await response.json() as JobsResponse
-      setJobs(data.jobs)
+      const data = await response.json() as ApiJobsResponse
+      console.log("API response:", data)
+
+      // Set jobs from API response
+      setJobs(data.jobs || [])
+      setFilteredJobs(data.jobs || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
       setIsLoading(false)
     }
-  }, [category, debouncedSearchTerm, debouncedCompanyName])
+  }, [category, debouncedSearchTerm, jobType, location, companyName, useResumeMatch])
 
   // Fetch jobs when API parameters change
   useEffect(() => {
     void fetchJobs()
   }, [fetchJobs])
 
-  // Apply client-side filters
+  // Apply client-side filters for salary 
+  // (other filters are handled by the API)
   useEffect(() => {
     let result = jobs
-
-    // Apply job type filter
-    if (jobType !== "all") {
-      result = result.filter((job) => job.job_type === jobType)
-    }
-
-    // Apply location filter
-    if (location !== "all") {
-      result = result.filter((job) => job.candidate_required_location?.toLowerCase().includes(location.toLowerCase()))
-    }
 
     // Apply salary filter
     if (showSalaryOnly) {
@@ -97,27 +119,29 @@ export default function JobDashboard() {
     }
 
     setFilteredJobs(result)
-  }, [jobs, jobType, location, showSalaryOnly])
+  }, [jobs, showSalaryOnly])
 
   // Reset all filters
   const resetFilters = useCallback(() => {
     setSearchTerm("")
     setDebouncedSearchTerm("")
-    setCategory("software-dev")
-    setDebouncedCompanyName("")
+    setCategory("")
+    setCompanyName("")
     setJobType("all")
     setLocation("all")
     setShowSalaryOnly(false)
+    setUseResumeMatch(false)
   }, [])
 
   // Filter counts for UI
   const activeFilterCount = [
     debouncedSearchTerm !== "",
-    category !== "software-dev",
-    debouncedCompanyName !== "",
+    category !== "",
+    companyName !== "",
     jobType !== "all",
     location !== "all",
     showSalaryOnly,
+    useResumeMatch,
   ].filter(Boolean).length
 
   // Toggle sidebar
@@ -133,8 +157,8 @@ export default function JobDashboard() {
         onClose={() => setSidebarOpen(false)}
         category={category}
         setCategory={setCategory}
-        companyName={debouncedCompanyName}
-        setCompanyName={setDebouncedCompanyName}
+        companyName={companyName}
+        setCompanyName={setCompanyName}
         jobType={jobType}
         setJobType={setJobType}
         location={location}
@@ -150,8 +174,8 @@ export default function JobDashboard() {
         <header className="top-0 z-10 bg-background backdrop-blur-md border-b border-t border-border-primary">
           <div className="container px-4 py-4">
             <div className="mb-4">
-              <h1 className="text-2xl font-bold tracking-tight">Remote Jobs</h1>
-              <p className="text-sm text-text-secondary">Find your next remote opportunity from top companies</p>
+              <h1 className="text-2xl font-bold tracking-tight">Job Search</h1>
+              <p className="text-sm text-text-secondary">Find your next opportunity with AI-powered matching</p>
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row">
@@ -203,6 +227,27 @@ export default function JobDashboard() {
                 </Button>
               </div>
             </div>
+
+            {/* Resume Matching Switch */}
+            <div className="flex items-center mt-4 space-x-2">
+              <Switch
+                id="resume-match"
+                checked={useResumeMatch}
+                onCheckedChange={setUseResumeMatch}
+              />
+              <label
+                htmlFor="resume-match"
+                className="text-sm flex items-center cursor-pointer"
+              >
+                <FileText className="h-4 w-4 mr-1 text-primary" />
+                Match to my resume
+              </label>
+              {useResumeMatch && (
+                <Badge variant="outline" className="ml-2">
+                  Using demo profile
+                </Badge>
+              )}
+            </div>
           </div>
         </header>
 
@@ -211,10 +256,10 @@ export default function JobDashboard() {
           <div className="bg-background border-b border-border-secondary">
             <div className="container px-4 py-2 flex flex-wrap items-center gap-2">
               <span className="text-xs text-slate-500">Active filters:</span>
-              {category !== "software-dev" && (
+              {category !== "" && (
                 <Badge variant="outline" className="text-xs">
                   {category.charAt(0).toUpperCase() + category.slice(1).replace("-", " ")}
-                  <button className="ml-1" onClick={() => setCategory("software-dev")}>
+                  <button className="ml-1" onClick={() => setCategory("")}>
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
@@ -257,6 +302,14 @@ export default function JobDashboard() {
                   </button>
                 </Badge>
               )}
+              {useResumeMatch && (
+                <Badge variant="outline" className="text-xs bg-blue-50">
+                  Resume matching
+                  <button className="ml-1" onClick={() => setUseResumeMatch(false)}>
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )}
               <button className="text-xs text-slate-500 hover:text-slate-700 flex items-center" onClick={resetFilters}>
                 <X className="h-3 w-3 mr-1" />
                 Clear all
@@ -276,6 +329,7 @@ export default function JobDashboard() {
               ) : (
                 <>
                   <span className="font-medium">{filteredJobs.length}</span> jobs found
+                  {useResumeMatch && <span className="ml-1 text-blue-600"> matched to your resume</span>}
                 </>
               )}
             </div>

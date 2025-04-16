@@ -105,7 +105,7 @@ export default function JobListing({ jobs }: JobListProps) {
                   <div className="flex flex-wrap gap-x-4 gap-y-2 items-center mt-2 text-sm text-slate-600">
                     <div className="flex items-center">
                       <MapPin className="h-4 w-4 mr-1 text-slate-400" />
-                      {job.candidate_required_location || "Location not specified"}
+                      {job.candidate_required_location ?? "Location not specified"}
                     </div>
 
                     {job.job_type && (
