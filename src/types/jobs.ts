@@ -25,10 +25,10 @@ export interface ApiJobsResponse {
   jobs: Job[];
 }
 
-export interface CompatibilityItem {
-  type: "pro" | "con";
+export interface CompatibilityCategoryGroup {
   category: "skills" | "experience" | "education" | "other";
-  text: string;
+  pros: string[];
+  cons: string[];
 }
 
 export interface SkillMatch {
@@ -45,7 +45,7 @@ export interface ExperienceMatch {
 export interface JobCompatibilityProps {
   job: Job;
   matchScore: number;
-  compatibilityData: CompatibilityItem[];
+  compatibilityData: CompatibilityCategoryGroup[]; // ✅ Updated type
   skillMatches: SkillMatch[];
   experienceMatches: ExperienceMatch[];
 }
