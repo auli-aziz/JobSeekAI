@@ -6,7 +6,7 @@ import { env } from "~/env";
 import type {
   Job,
   JobCompatibilityProps,
-  CompatibilityItem,
+  CompatibilityCategoryGroup,
   SkillMatch,
   ExperienceMatch,
 } from "~/types/jobs";
@@ -30,10 +30,27 @@ You are a job compatibility assistant. Given the user's profile and a job descri
 
 Respond only in valid JSON using the following structure:
 
+interface CompatibilityCategoryGroup {
+  category: "skills" | "experience" | "education" | "other";
+  pros: string[];
+  cons: string[];
+}
+
+interface SkillMatch {
+  skill: string;
+  matchScore: number;
+}
+
+interface ExperienceMatch {
+  area: string;
+  actual: number;
+  required: number;
+}
+
 {
   "matchScore": number,
   "AIRecommendation": string,
-  "compatibilityData": CompatibilityItem[],
+  "compatibilityData": CompatibilityCategoryGroup[],
   "skillMatches": SkillMatch[],
   "experienceMatches": ExperienceMatch[]
 }
@@ -62,11 +79,11 @@ ${job.description}
     .trim()
     .replace(/^```json|```$/g, "")
     .trim();
-    
+
   const parsed = JSON.parse(cleanedText) as {
     matchScore: number;
     AIRecommendation: string;
-    compatibilityData: CompatibilityItem[];
+    compatibilityData: CompatibilityCategoryGroup[];
     skillMatches: SkillMatch[];
     experienceMatches: ExperienceMatch[];
   };

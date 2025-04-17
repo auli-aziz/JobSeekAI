@@ -33,19 +33,19 @@ export interface CompatibilityCategoryGroup {
 
 export interface SkillMatch {
   skill: string;
-  match: number;
+  matchScore: number;
 }
 
 export interface ExperienceMatch {
   area: string;
-  years: number;
+  actual: number;
   required: number;
 }
 
 export interface JobCompatibilityProps {
   job: Job;
   matchScore: number;
-  compatibilityData: CompatibilityCategoryGroup[]; // ✅ Updated type
+  compatibilityData: CompatibilityCategoryGroup[];
   skillMatches: SkillMatch[];
   experienceMatches: ExperienceMatch[];
 }

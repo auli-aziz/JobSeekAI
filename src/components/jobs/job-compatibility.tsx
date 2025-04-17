@@ -117,9 +117,9 @@ export default function JobCompatibility({
           </div>
 
           <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <div className="mb-2 flex items-center gap-2">
-              <Sparkles className="text-primary h-4 w-4" />
-              <h4 className="font-medium text-slate-900">AI Recommendation</h4>
+            <div className="mb-2 flex items-center text-slate-900 gap-2">
+              <Sparkles className="text-primary h-4 w-4 text-slate-900" />
+              <h4 className="font-medium">AI Recommendation</h4>
             </div>
             <p className="text-sm text-slate-700">
               Based on your profile, you&apos;re a strong candidate for this
@@ -151,18 +151,18 @@ export default function JobCompatibility({
                         {skill.skill}
                       </span>
                       <span className="text-sm text-slate-500">
-                        {skill.match}% match
+                        {skill.matchScore}% match
                       </span>
                     </div>
                     <div className="h-2 w-full rounded-full bg-slate-200">
                       <div
                         className="h-2 rounded-full"
                         style={{
-                          width: `${skill.match}%`,
+                          width: `${skill.matchScore}%`,
                           backgroundColor:
-                            skill.match >= 80
+                            skill.matchScore >= 80
                               ? "#10b981"
-                              : skill.match >= 60
+                              : skill.matchScore >= 60
                                 ? "#22c55e"
                                 : "#f59e0b",
                         }}
@@ -199,13 +199,13 @@ export default function JobCompatibility({
                         {exp.area}
                       </span>
                       <div className="flex items-center">
-                        {exp.years >= exp.required ? (
+                        {exp.actual >= exp.required ? (
                           <CheckCircle2 className="mr-1 h-4 w-4 text-green-500" />
                         ) : (
                           <XCircle className="mr-1 h-4 w-4 text-amber-500" />
                         )}
                         <span className="text-sm text-slate-500">
-                          {exp.years} yr{exp.years !== 1 ? "s" : ""} /{" "}
+                          {exp.actual} yr{exp.actual !== 1 ? "s" : ""} /{" "}
                           {exp.required} yr{exp.required !== 1 ? "s" : ""}{" "}
                           required
                         </span>
@@ -215,9 +215,9 @@ export default function JobCompatibility({
                       <div
                         className="h-2 rounded-full"
                         style={{
-                          width: `${Math.min(100, (exp.years / exp.required) * 100)}%`,
+                          width: `${Math.min(100, (exp.actual / exp.required) * 100)}%`,
                           backgroundColor:
-                            exp.years >= exp.required ? "#10b981" : "#f59e0b",
+                            exp.actual >= exp.required ? "#10b981" : "#f59e0b",
                         }}
                       ></div>
                     </div>

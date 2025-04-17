@@ -64,8 +64,6 @@ export default function JobDetailsPage() {
 
         const compatibilityResult = await processProfile(dummyResume, foundJob);
         setCompatibility(compatibilityResult);
-        console.log(compatibilityResult)
-        console.log(compatibilityResult.compatibilityData)
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -217,7 +215,7 @@ export default function JobDetailsPage() {
             {/* Job Content */}
             <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
               <Tabs defaultValue="description" className="w-full">
-                <TabsList className="bg-background grid w-full grid-cols-2">
+                <TabsList className="bg-slate-200 grid w-full grid-cols-2">
                   <TabsTrigger value="description">Job Description</TabsTrigger>
                   <TabsTrigger value="compatibility">
                     Match Analysis
