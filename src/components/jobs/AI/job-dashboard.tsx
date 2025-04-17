@@ -21,7 +21,7 @@ type ApiJobsResponse = {
   jobs: Job[];
 };
 
-export default function JobDashboard() {
+export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVector: boolean, userId: string }) {
   // State
   const [jobs, setJobs] = useState<Job[]>([])
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([])
@@ -39,10 +39,7 @@ export default function JobDashboard() {
   const [useResumeMatch, setUseResumeMatch] = useState(false)
   const [companyName, setCompanyName] = useState("")
 
-  // Dummy user ID for resume matching demo
-  const dummyUserId = "402c091e-db8c-45f4-9b31-a5f13260ef96"
 
-  // Debounce search terms
   const debouncedSearch = useDebounce((value: string) => {
     setDebouncedSearchTerm(value)
   }, 500)
@@ -76,8 +73,7 @@ export default function JobDashboard() {
       // Add company name filter
       if (companyName) params.append("companyName", companyName)
 
-      // Add user ID for resume matching
-      if (useResumeMatch) params.append("userId", dummyUserId)
+      if (useResumeMatch) params.append("userId", userId)
 
       // Add limit
       params.append("limit", "50")

@@ -50,3 +50,13 @@ export async function embeddingResume(userId: string, embeddedText: string) {
 }
 
 
+export async function hasResume(userId: string): Promise<boolean> {
+  const result = await db
+    .select()
+    .from(resumeVector)
+    .where(eq(resumeVector.userId, userId))
+    .limit(1)
+  return result.length > 0
+}
+
+
