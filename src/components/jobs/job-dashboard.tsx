@@ -305,7 +305,7 @@ export default function JobDashboard() {
             // Error state
             <div className="text-center p-10 border border-red-100 rounded-lg bg-red-50">
               <p className="text-red-600 mb-4">{error}</p>
-              <Button onClick={fetchJobs}>
+              <Button onClick={fetchJobs} className="bg-button">
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Try Again
               </Button>

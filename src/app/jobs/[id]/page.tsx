@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { processProfile } from "~/server/scripts/process-profile";
+import { dummyResume } from "~/data/dummy-resume";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
@@ -17,7 +19,7 @@ import {
   Share2,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import type { Job, JobsResponse } from "~/types/jobs";
+import type { Job, JobsResponse, JobCompatibilityProps } from "~/types/jobs";
 import JobCompatibility from "~/components/jobs/job-compatibility";
 import RelatedJobs from "~/components/jobs/related-jobs";
 import MatchScore from "~/components/jobs/match-score";
@@ -30,6 +32,8 @@ export default function JobDetailsPage() {
   const [job, setJob] = useState<Job | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [compatibility, setCompatibility] =
+    useState<JobCompatibilityProps | null>(null);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -57,6 +61,9 @@ export default function JobDetailsPage() {
         }
 
         setJob(foundJob);
+
+        const compatibilityResult = await processProfile(dummyResume, foundJob);
+        setCompatibility(compatibilityResult);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -66,14 +73,6 @@ export default function JobDetailsPage() {
 
     void fetchJob();
   }, [params.id]);
-
-  // Generate a consistent but random-looking match score based on job ID
-  const generateMatchScore = (jobId: number): number => {
-    // Use the job ID as a seed to generate a consistent score
-    const seed = jobId % 100;
-    // Generate a score between 55 and 95
-    return Math.floor(55 + (seed % 41));
-  };
 
   const formatDate = (dateString: string) => {
     try {
@@ -105,7 +104,7 @@ export default function JobDetailsPage() {
 
   if (error || !job) {
     return (
-      <div className="min-h-screen bg-slate-50 py-8">
+      <div className="min-h-screen bg-background py-8">
         <div className="w-full px-4 py-8 lg:px-20">
           <Button
             variant="ghost"
@@ -127,10 +126,8 @@ export default function JobDetailsPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
-
-  const matchScore = generateMatchScore(job.id);
 
   return (
     <div className="bg-background min-h-screen pb-16">
@@ -170,22 +167,20 @@ export default function JobDetailsPage() {
             <div className="mb-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <h1 className="mb-2 text-2xl font-bold">
-                    {job.title}
-                  </h1>
+                  <h1 className="mb-2 text-2xl font-bold">{job.title}</h1>
                   <div className="flex items-center gap-2 text-slate-500">
                     <div className="flex items-center">
                       <Building className="mr-1 h-4 w-4" />
                       {job.company_name}
                     </div>
                     <span className="text-slate-500">•</span>
-                    <div className="text-sm ">
+                    <div className="text-sm">
                       Posted {formatDate(job.publication_date)}
                     </div>
                   </div>
                 </div>
                 <div className="hidden sm:block">
-                  <MatchScore score={matchScore} size="lg" />
+                  <MatchScore score={compatibility!.matchScore} size="lg" />
                 </div>
               </div>
 
@@ -220,7 +215,7 @@ export default function JobDetailsPage() {
             {/* Job Content */}
             <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
               <Tabs defaultValue="description" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 bg-background">
+                <TabsList className="bg-slate-200 grid w-full grid-cols-2">
                   <TabsTrigger value="description">Job Description</TabsTrigger>
                   <TabsTrigger value="compatibility">
                     Match Analysis
@@ -235,7 +230,13 @@ export default function JobDetailsPage() {
                 </TabsContent>
 
                 <TabsContent value="compatibility" className="pt-6">
-                  <JobCompatibility job={job} matchScore={matchScore} />
+                  <JobCompatibility
+                    job={job}
+                    matchScore={compatibility!.matchScore}
+                    compatibilityData={compatibility!.compatibilityData}
+                    skillMatches={compatibility!.skillMatches}
+                    experienceMatches={compatibility!.experienceMatches}
+                  />
                 </TabsContent>
               </Tabs>
             </div>
@@ -245,26 +246,24 @@ export default function JobDetailsPage() {
           <div className="space-y-6">
             {/* Mobile Match Score */}
             <div className="mb-4 flex justify-center sm:hidden">
-              <MatchScore score={matchScore} size="lg" />
+              <MatchScore score={compatibility!.matchScore} size="lg" />
             </div>
 
             {/* Apply Card */}
             <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-lg font-semibold text-button">Ready to Apply?</h2>
+              <h2 className="text-button mb-4 text-lg font-semibold">
+                Ready to Apply?
+              </h2>
               <p className="mb-6 text-sm text-slate-600">
-                This job is a {matchScore}% match for your profile. Apply now to
+                This job is a {compatibility!.matchScore}% match for your profile. Apply now to
                 connect with {job.company_name}.
               </p>
-              <div className="space-y-3">
+              <div className="flex flex-col space-y-3">
                 <Link href={job.url ?? ""}>
-                  <Button
-                    variant="secondary"
-                    className="w-full"
-                  >
+                  <Button variant="secondary" className="w-full">
                     Apply on Company Website
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
-
                 </Link>
                 <Button variant="outline" className="w-full">
                   <FileText className="mr-2 h-4 w-4" />
@@ -275,7 +274,9 @@ export default function JobDetailsPage() {
 
             {/* Company Card */}
             <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-lg text-button font-semibold">About the Company</h2>
+              <h2 className="text-button mb-4 text-lg font-semibold">
+                About the Company
+              </h2>
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-md bg-slate-100">
                   {job.company_logo ? (
@@ -291,7 +292,9 @@ export default function JobDetailsPage() {
                   )}
                 </div>
                 <div>
-                  <h3 className="font-medium text-slate-700">{job.company_name}</h3>
+                  <h3 className="font-medium text-slate-700">
+                    {job.company_name}
+                  </h3>
                   <p className="text-sm text-slate-500">{job.category}</p>
                 </div>
               </div>
@@ -302,8 +305,13 @@ export default function JobDetailsPage() {
 
             {/* Related Jobs */}
             <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-lg text-button font-semibold">Similar Jobs</h2>
-              <RelatedJobs currentJobId={job.id} category={job.category ?? "unspecified"} />
+              <h2 className="text-button mb-4 text-lg font-semibold">
+                Similar Jobs
+              </h2>
+              <RelatedJobs
+                currentJobId={job.id}
+                category={job.category ?? "unspecified"}
+              />
             </div>
           </div>
         </div>
@@ -356,5 +364,5 @@ function JobDetailsPageSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }
