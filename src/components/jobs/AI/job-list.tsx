@@ -1,11 +1,15 @@
 "use client";
 
 import type React from "react";
+import { useState } from "react";
+import Image from "next/image";
+import { formatDistanceToNow } from "date-fns";
 
 import { Card, CardContent } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { Dialog, DialogContent } from "~/components/ui/dialog";
+
 import {
   Briefcase,
   DollarSign,
@@ -16,9 +20,7 @@ import {
   Star,
   FileText,
 } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+
 import type { Job } from "~/types/jobs";
 import JobDetail from "./job-detail";
 import MatchScore from "../match-score";
@@ -31,15 +33,18 @@ export default function JobListing({ jobs }: JobListProps) {
   const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set());
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const jobsPerPage = 5;
+  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+  const paginatedJobs = jobs.slice(
+    (currentPage - 1) * jobsPerPage,
+    currentPage * jobsPerPage
+  );
 
   const toggleSaved = (jobId: string, event: React.MouseEvent) => {
     event.stopPropagation();
     const newSavedJobs = new Set(savedJobs);
-    if (savedJobs.has(jobId)) {
-      newSavedJobs.delete(jobId);
-    } else {
-      newSavedJobs.add(jobId);
-    }
     setSavedJobs(newSavedJobs);
   };
 
@@ -60,7 +65,7 @@ export default function JobListing({ jobs }: JobListProps) {
   return (
     <>
       <div className="space-y-4">
-        {jobs.map((job) => {
+        {paginatedJobs.map((job) => {
           const jobId = job.job_id || job.id || "";
           const locationDisplay = job.location ?? "Location not specified";
 
@@ -72,7 +77,6 @@ export default function JobListing({ jobs }: JobListProps) {
             >
               <CardContent className="p-4">
                 <div className="flex items-start">
-                  {/* Company Logo */}
                   <div className="mr-4 flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded bg-slate-100">
                     {job.company_logo ? (
                       <Image
@@ -87,7 +91,6 @@ export default function JobListing({ jobs }: JobListProps) {
                     )}
                   </div>
 
-                  {/* Job Info */}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between">
                       <div>
@@ -135,36 +138,31 @@ export default function JobListing({ jobs }: JobListProps) {
                       </div>
                     </div>
 
-                    {/* Job Details */}
                     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-600">
                       <div className="flex items-center">
                         <MapPin className="mr-1 h-4 w-4 text-slate-400" />
                         {locationDisplay}
                       </div>
-
                       {job.job_type && (
                         <div className="flex items-center">
                           <Briefcase className="mr-1 h-4 w-4 text-slate-400" />
                           {job.job_type === "full_time"
                             ? "Full-time"
                             : job.job_type === "part_time"
-                              ? "Part-time"
-                              : job.job_type}
+                            ? "Part-time"
+                            : job.job_type}
                         </div>
                       )}
-
                       {job.salary && (
                         <div className="flex items-center">
                           <DollarSign className="mr-1 h-4 w-4 text-slate-400" />
                           {job.salary}
                         </div>
                       )}
-
                       <div className="flex items-center">
                         <Clock className="mr-1 h-4 w-4 text-slate-400" />
                         {formatDate(job.publication_date)}
                       </div>
-
                       {job.similarityScore !== undefined && (
                         <div className="flex items-center">
                           <FileText className="mr-1 h-4 w-4 text-slate-400" />
@@ -173,7 +171,6 @@ export default function JobListing({ jobs }: JobListProps) {
                       )}
                     </div>
 
-                    {/* Tags */}
                     <div className="mt-3 flex flex-wrap gap-2">
                       <Badge variant="outline" className="bg-background">
                         {job.category ?? "Uncategorized"}
@@ -186,6 +183,29 @@ export default function JobListing({ jobs }: JobListProps) {
           );
         })}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-center space-x-2">
+          <Button
+            variant="outline"
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+          <span className="flex items-center px-2 text-sm text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
+      )}
 
       {/* Job Detail Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
