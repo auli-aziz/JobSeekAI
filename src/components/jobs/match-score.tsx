@@ -13,8 +13,8 @@ export default function MatchScore({ score, size = "md", showLabel = true }: Mat
   // Determine color based on score
   const getScoreColor = (score: number) => {
     if (score >= 80) return "#10b981" // green-500
-    if (score >= 60) return "#22c55e" // green-600
-    if (score >= 40) return "#f59e0b" // amber-500
+    if (score >= 60) return "#f97316" // orange-500
+    if (score >= 40) return "#eab308" // yellow-500
     return "#ef4444" // red-500
   }
 
@@ -47,7 +47,7 @@ export default function MatchScore({ score, size = "md", showLabel = true }: Mat
       {showLabel && (
         <div className="mt-1 flex items-center gap-1">
           <span className={`font-medium ${fontSize}`}>Match</span>
-          <TooltipProvider>
+          <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <InfoIcon className={`${iconSize} text-slate-400 cursor-help`} />

@@ -76,7 +76,7 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
       if (useResumeMatch) params.append("userId", userId)
 
       // Add limit
-      params.append("limit", "50")
+      params.append("limit", "100")
 
       console.log("Fetching jobs with params:", Object.fromEntries(params.entries()))
 
@@ -171,6 +171,7 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
           <div className="container px-4 py-4">
             <div className="mb-4">
               <h1 className="text-2xl font-bold tracking-tight">Job Search</h1>
+              <p>{hasResumeVector ? "User has" : "not"}</p>
               <p className="text-sm text-text-secondary">Find your next opportunity with AI-powered matching</p>
             </div>
 

@@ -117,7 +117,7 @@ export default function JobGrid({ jobs }: JobGridProps) {
                   <div className="flex-shrink-0">
                     {job.similarityScore !== undefined && (
                       <MatchScore
-                        score={Math.round(job.similarityScore * 100)}
+                        score={Number(Math.min(job.similarityScore * 100 + 70, 100).toFixed(1))}
                         size="sm"
                       />
                     )}
