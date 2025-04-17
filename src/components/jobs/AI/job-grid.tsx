@@ -1,12 +1,15 @@
 "use client";
 
 import type React from "react";
+import { useState } from "react";
+import Image from "next/image";
+import { formatDistanceToNow } from "date-fns";
 
 import { Card, CardContent } from "~/components/ui/card";
-import Image from "next/image";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { Dialog, DialogContent } from "~/components/ui/dialog";
+
 import {
   Briefcase,
   DollarSign,
@@ -15,8 +18,7 @@ import {
   Clock,
   Star,
 } from "lucide-react";
-import { useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+
 import type { Job } from "~/types/jobs";
 import JobDetail from "./job-detail";
 import MatchScore from "../match-score";
@@ -29,6 +31,14 @@ export default function JobGrid({ jobs }: JobGridProps) {
   const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set());
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const jobsPerPage = 6;
+  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+  const paginatedJobs = jobs.slice(
+    (currentPage - 1) * jobsPerPage,
+    currentPage * jobsPerPage
+  );
 
   const toggleSaved = (jobId: number, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -58,7 +68,7 @@ export default function JobGrid({ jobs }: JobGridProps) {
   return (
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {jobs.map((job) => (
+        {paginatedJobs.map((job) => (
           <Card
             key={job.id}
             className="border-border-primary cursor-pointer overflow-hidden transition-all hover:shadow-md"
@@ -117,7 +127,9 @@ export default function JobGrid({ jobs }: JobGridProps) {
                   <div className="flex-shrink-0">
                     {job.similarityScore !== undefined && (
                       <MatchScore
-                        score={Number(Math.min(job.similarityScore * 100 + 70, 100).toFixed(1))}
+                        score={Number(
+                          Math.min(job.similarityScore * 100 + 70, 100).toFixed(1)
+                        )}
                         size="sm"
                       />
                     )}
@@ -139,8 +151,8 @@ export default function JobGrid({ jobs }: JobGridProps) {
                         {job.job_type === "full_time"
                           ? "Full-time"
                           : job.job_type === "part_time"
-                            ? "Part-time"
-                            : job.job_type}
+                          ? "Part-time"
+                          : job.job_type}
                       </span>
                     </div>
                   )}
@@ -165,6 +177,29 @@ export default function JobGrid({ jobs }: JobGridProps) {
           </Card>
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-center space-x-2">
+          <Button
+            variant="outline"
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+          <span className="flex items-center px-2 text-sm text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
+      )}
 
       {/* Job Detail Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
