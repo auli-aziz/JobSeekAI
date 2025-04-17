@@ -71,7 +71,7 @@ ${job.description}
   `.trim();
 
   const { text } = await generateText({
-    model: openai.chat("gpt-4o-mini"),
+    model: openai.chat("gpt-4.1-mini"),
     messages: [{ role: "user", content: prompt }],
   });
 

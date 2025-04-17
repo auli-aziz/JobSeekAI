@@ -8,8 +8,8 @@ import { SessionProvider } from "next-auth/react";
 import { Space_Grotesk } from "next/font/google";
 
 export const metadata: Metadata = {
-  title: "AJF",
-  description: "Easily find job with the help of AI",
+  title: "JobSeekAI",
+  description: "Easily find your dream job with the help of AI",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
