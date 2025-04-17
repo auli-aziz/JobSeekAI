@@ -17,6 +17,7 @@ export const env = createEnv({
     LINKEDIN_CLIENT_SECRET: z.string(),
     DATABASE_URL: z.string().url(),
     EMBEDDED_OPENAI_KEY: z.string(),
+    OPENAI_API_KEY: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),

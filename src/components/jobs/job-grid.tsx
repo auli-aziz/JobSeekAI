@@ -63,9 +63,9 @@ export default function JobGrid({ jobs }: JobGridProps) {
             className="border-border-primary cursor-pointer overflow-hidden transition-all hover:shadow-md"
           >
             <CardContent className="p-0">
-              <Link href={`/jobs/${job.id}`}>
+              <div onClick={() => openJobDetail(job)}>
                 {/* Card Header */}
-                <div className="border-border-secondary flex justify-between border-b  p-4">
+                <div className="border-border-secondary flex justify-between border-b p-4">
                   <div className="flex items-center space-x-4">
                     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded bg-slate-100">
                       {job.company_logo ? (
@@ -115,7 +115,8 @@ export default function JobGrid({ jobs }: JobGridProps) {
                     <div className="flex items-center text-sm">
                       <MapPin className="mr-2 h-4 w-4 flex-shrink-0 text-slate-400" />
                       <span className="truncate text-slate-600">
-                        {job.candidate_required_location ?? "Location not specified"}
+                        {job.candidate_required_location ??
+                          "Location not specified"}
                       </span>
                     </div>
 
@@ -140,19 +141,16 @@ export default function JobGrid({ jobs }: JobGridProps) {
                     )}
                   </div>
                 </div>
-              </Link>
+              </div>
 
               {/* Card Footer */}
               <div className="border-border-secondary bg-background flex items-center justify-between border-t px-4 py-3">
                 <Badge variant="outline" className="bg-background">
                   {job.category}
                 </Badge>
-                <div
-                  onClick={() => openJobDetail(job)}
-                  className="text-xs font-medium"
-                >
-                  View Details →
-                </div>
+                <Link href={`/jobs/${job.id}`}>
+                  <div className="text-xs font-medium">View Details →</div>
+                </Link>
               </div>
             </CardContent>
           </Card>

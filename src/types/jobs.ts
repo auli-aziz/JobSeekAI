@@ -25,3 +25,27 @@ export interface ApiJobsResponse {
   jobs: Job[]
 }
 
+export interface CompatibilityItem {
+  type: "pro" | "con";
+  category: "skills" | "experience" | "education" | "other";
+  text: string;
+}
+
+export interface SkillMatch {
+  skill: string;
+  match: number;
+}
+
+export interface ExperienceMatch {
+  area: string;
+  years: number;
+  required: number;
+}
+
+export interface JobCompatibilityProps {
+  job: Job;
+  matchScore: number;
+  compatibilityData: CompatibilityItem[];
+  skillMatches: SkillMatch[];
+  experienceMatches: ExperienceMatch[];
+}

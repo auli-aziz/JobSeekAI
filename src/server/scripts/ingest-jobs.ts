@@ -68,7 +68,7 @@ export async function ingestJobs(prevState: IngestState, apiUrl: string): Promis
       }
 
       const { embedding } = await embed({
-        model: openai.embedding('text-embedding-3-small'),
+        model: openai.embedding('text-embedding-3'),
         value: jobText,
       });
 

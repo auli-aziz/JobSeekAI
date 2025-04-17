@@ -4,14 +4,9 @@ import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { Card, CardContent } from "~/components/ui/card"
 import { Badge } from "~/components/ui/badge"
-import { CheckCircle2, XCircle, AlertCircle, Sparkles, Award, Briefcase, GraduationCap, Code } from "lucide-react"
+import { CheckCircle2, XCircle, AlertCircle, Sparkles } from "lucide-react"
 import type { Job } from "~/types/jobs"
 import MatchScore from "~/components/jobs/match-score"
-
-interface JobCompatibilityProps {
-  job: Job
-  matchScore: number
-}
 
 interface CompatibilityItem {
   type: "pro" | "con"
@@ -19,127 +14,36 @@ interface CompatibilityItem {
   text: string
 }
 
-export default function JobCompatibility({ job, matchScore }: JobCompatibilityProps) {
+interface SkillMatch {
+  skill: string
+  match: number
+}
+
+interface ExperienceMatch {
+  area: string
+  years: number
+  required: number
+}
+
+interface JobCompatibilityProps {
+  job: Job
+  matchScore: number
+  compatibilityData: CompatibilityItem[]
+  skillMatches: SkillMatch[]
+  experienceMatches: ExperienceMatch[]
+}
+
+export default function JobCompatibility({
+  job,
+  matchScore,
+  compatibilityData,
+  skillMatches,
+  experienceMatches,
+}: JobCompatibilityProps) {
   const [activeTab, setActiveTab] = useState<string>("overview")
 
-  // Generate dummy compatibility data based on job
-  const generateCompatibilityData = (job: Job): CompatibilityItem[] => {
-    // This would normally come from an AI analysis of the resume and job
-    const data: CompatibilityItem[] = []
-
-    // Add some pros based on job title and category
-    if (job.title.toLowerCase().includes("developer") || job.title.toLowerCase().includes("engineer")) {
-      data.push({
-        type: "pro",
-        category: "skills",
-        text: "Your programming skills in JavaScript and React match the job requirements",
-      })
-      data.push({
-        type: "pro",
-        category: "experience",
-        text: "You have 3+ years of experience in software development",
-      })
-    }
-
-    if (job.title.toLowerCase().includes("senior") || job.title.toLowerCase().includes("lead")) {
-      data.push({
-        type: "pro",
-        category: "experience",
-        text: "Your leadership experience aligns with this senior role",
-      })
-    }
-
-    if (job.title.toLowerCase().includes("frontend")) {
-      data.push({
-        type: "pro",
-        category: "skills",
-        text: "Your UI/UX design skills are a great match for this position",
-      })
-    }
-
-    // Add some generic pros
-    data.push({
-      type: "pro",
-      category: "education",
-      text: "Your educational background meets the requirements",
-    })
-
-    // Add some cons
-    if (job.title.toLowerCase().includes("backend")) {
-      data.push({
-        type: "con",
-        category: "skills",
-        text: "You may need to strengthen your database optimization skills",
-      })
-    }
-
-    if (job.title.toLowerCase().includes("manager")) {
-      data.push({
-        type: "con",
-        category: "experience",
-        text: "You have less management experience than required",
-      })
-    }
-
-    // Add some generic cons
-    data.push({
-      type: "con",
-      category: "skills",
-      text: "Consider improving your knowledge of industry-specific tools",
-    })
-
-    // Ensure we have at least 3 pros and 2 cons
-    if (data.filter((item) => item.type === "pro").length < 3) {
-      data.push({
-        type: "pro",
-        category: "other",
-        text: "Your communication skills are well-suited for this role",
-      })
-    }
-
-    if (data.filter((item) => item.type === "con").length < 2) {
-      data.push({
-        type: "con",
-        category: "other",
-        text: "The job requires more experience with remote collaboration tools",
-      })
-    }
-
-    return data
-  }
-
-  const compatibilityData = generateCompatibilityData(job)
   const pros = compatibilityData.filter((item) => item.type === "pro")
   const cons = compatibilityData.filter((item) => item.type === "con")
-
-  // Generate skill match data
-  const skillMatches = [
-    { skill: "JavaScript", match: 95 },
-    { skill: "React", match: 90 },
-    { skill: "TypeScript", match: 85 },
-    { skill: "Node.js", match: 75 },
-    { skill: "UI/UX Design", match: 70 },
-  ]
-
-  // Generate experience match data
-  const experienceMatches = [
-    { area: "Software Development", years: 4, required: 3 },
-    { area: "Team Leadership", years: 2, required: 3 },
-    { area: "Remote Work", years: 3, required: 1 },
-  ]
-
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case "skills":
-        return <Code className="h-4 w-4" />
-      case "experience":
-        return <Briefcase className="h-4 w-4" />
-      case "education":
-        return <GraduationCap className="h-4 w-4" />
-      default:
-        return <Award className="h-4 w-4" />
-    }
-  }
 
   return (
     <div className="space-y-4">
@@ -170,7 +74,6 @@ export default function JobCompatibility({ job, matchScore }: JobCompatibilityPr
                 <ul className="space-y-3">
                   {pros.map((pro, index) => (
                     <li key={index} className="flex gap-2">
-                      <div className="mt-0.5 text-green-500">{getCategoryIcon(pro.category)}</div>
                       <div>
                         <p className="text-sm text-slate-700">{pro.text}</p>
                         <Badge variant="outline" className="mt-1 text-xs bg-green-50 text-green-700 border-green-200">
@@ -193,7 +96,6 @@ export default function JobCompatibility({ job, matchScore }: JobCompatibilityPr
                 <ul className="space-y-3">
                   {cons.map((con, index) => (
                     <li key={index} className="flex gap-2">
-                      <div className="mt-0.5 text-amber-500">{getCategoryIcon(con.category)}</div>
                       <div>
                         <p className="text-sm text-slate-700">{con.text}</p>
                         <Badge variant="outline" className="mt-1 text-xs bg-amber-50 text-amber-700 border-amber-200">
