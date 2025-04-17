@@ -12,7 +12,7 @@ import type {
 } from "~/types/jobs";
 
 const openai = createOpenAI({
-  apiKey: env.OPENAI_API_KEY as string,
+  apiKey: env.OPENAI_API_KEY,
 });
 
 export async function processProfile(
