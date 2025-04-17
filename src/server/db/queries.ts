@@ -6,6 +6,7 @@ import { db } from '.';
 import { resumeVector } from './schema';
 import { eq } from 'drizzle-orm';
 
+
 const openai = createOpenAI({
   compatibility: 'compatible', // strict mode, enable when using the OpenAI API
   apiKey: env.EMBEDDED_OPENAI_KEY,
@@ -58,5 +59,4 @@ export async function hasResume(userId: string): Promise<boolean> {
     .limit(1)
   return result.length > 0
 }
-
 
