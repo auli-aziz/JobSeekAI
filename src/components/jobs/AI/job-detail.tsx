@@ -1,142 +1,183 @@
-"use client"
-import { Button } from "~/components/ui/button"
-import { Badge } from "~/components/ui/badge"
-import { ScrollArea } from "~/components/ui/scroll-area"
-import { ExternalLink, X, MapPin, Briefcase, DollarSign, Building, Calendar, FileText } from "lucide-react"
-import Image from "next/image"
-import { format } from "date-fns"
-import type { Job } from "~/types/jobs"
+"use client";
 
-interface JobDetailProps {
-  job: Job
-}
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import {
+  ExternalLink,
+  MapPin,
+  Briefcase,
+  DollarSign,
+  Building,
+} from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { Badge } from "../../ui/badge";
+import { Button } from "../../ui/button";
+import { ScrollArea } from "../../ui/scroll-area";
+import {
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "../../ui/dialog";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../ui/tabs";
+import JobCompatibility from "../job-compatibility";
+import { processProfile } from "~/server/scripts/process-profile";
+import { dummyResume } from "~/data/dummy-resume";
+import type { Job, JobCompatibilityProps } from "~/types/jobs";
 
-export default function JobDetail({ job }: JobDetailProps) {
-  // Format date helper function
-  const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return "Unknown date"
+export default function JobDetail({ job }: { job: Job }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [compatibility, setCompatibility] =
+    useState<JobCompatibilityProps | null>(null);
+
+  const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), "PPP")
+      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
     } catch {
-      return "Invalid date"
+      return dateString;
     }
-  }
+  };
 
-  const locationDisplay = job.location ?? "unspecified"
+  useEffect(() => {
+    const fetchCompatibility = async () => {
+      if (!job.similarityScore) {
+        setIsLoading(false);
+        return;
+      }
 
-  // Handler for apply button
-  const handleApply = () => {
-    if (job.url) {
-      window.open(job.url, '_blank')
-    }
-  }
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const result = await processProfile(dummyResume, job);
+        setCompatibility(result);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void fetchCompatibility();
+  }, [job]);
+
+  const showMatchTab = job.similarityScore != null;
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(90vh-2rem)]">
-      {/* Header */}
-      <div className="pb-4 mb-4 border-b flex items-start justify-between">
-        <div className="flex items-center">
-          <div className="h-14 w-14 rounded bg-slate-100 flex items-center justify-center overflow-hidden mr-4">
+    <>
+      <DialogHeader className="space-y-2">
+        <div className="flex items-center space-x-3">
+          <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded bg-slate-100">
             {job.company_logo ? (
               <Image
                 src={job.company_logo}
-                alt={`${job.company_name || 'Company'} logo`}
+                alt={job.company_name}
                 className="h-full w-full object-contain"
-                width={56}
-                height={56}
+                width={40}
+                height={40}
               />
             ) : (
               <Building className="h-6 w-6 text-slate-400" />
             )}
           </div>
           <div>
-            <h2 className="text-xl font-semibold">{job.title}</h2>
-            <p className="text-slate-600">{job.company_name}</p>
+            <DialogTitle className="text-xl leading-tight">
+              {job.title}
+            </DialogTitle>
+            <DialogDescription className="mt-1 text-sm">
+              {job.company_name} · Posted {formatDate(job.publication_date)}
+            </DialogDescription>
           </div>
         </div>
-        <div className="flex items-center text-sm text-slate-500">
-          <Calendar className="h-4 w-4 mr-1" />
-          {formatDate(job.publication_date)}
-        </div>
-      </div>
 
-      {/* Meta Information */}
-      <div className="flex flex-wrap gap-3 mb-6">
-        <Badge variant="outline" className="flex items-center gap-1 py-1.5">
-          <MapPin className="h-3.5 w-3.5" />
-          {locationDisplay}
-        </Badge>
-
-        {job.job_type && (
-          <Badge variant="outline" className="flex items-center gap-1 py-1.5">
-            <Briefcase className="h-3.5 w-3.5" />
-            {job.job_type === "full_time"
-              ? "Full-time"
-              : job.job_type === "part_time"
-                ? "Part-time"
-                : job.job_type}
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="outline" className="flex items-center gap-1">
+            <MapPin className="h-3 w-3" />
+            {job.candidate_required_location ?? "Location not specified"}
           </Badge>
-        )}
 
-        {job.salary && (
-          <Badge variant="outline" className="flex items-center gap-1 py-1.5">
-            <DollarSign className="h-3.5 w-3.5" />
-            {job.salary}
-          </Badge>
-        )}
-
-        {job.similarityScore !== undefined && (
-          <Badge variant="outline" className="flex items-center gap-1 py-1.5 bg-green-50">
-            <FileText className="h-3.5 w-3.5" />
-            Match: {Math.round(job.similarityScore * 100)}%
-          </Badge>
-        )}
-      </div>
-
-      {/* Job Description */}
-      <div className="flex-1 overflow-hidden">
-        <h3 className="font-medium mb-2">Job Description</h3>
-        <ScrollArea className="h-[calc(100%-2rem)] pr-4">
-          {job.description ? (
-            <div
-              className="prose prose-slate max-w-none prose-headings:font-semibold prose-headings:text-slate-900 prose-p:text-slate-700 prose-strong:text-slate-900 prose-li:text-slate-700"
-              dangerouslySetInnerHTML={{ __html: job.description }}
-            />
-          ) : (
-            <p className="text-slate-500 italic">No description available for this job posting.</p>
+          {job.job_type && (
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Briefcase className="h-3 w-3" />
+              {job.job_type === "full_time"
+                ? "Full-time"
+                : job.job_type === "part_time"
+                  ? "Part-time"
+                  : job.job_type}
+            </Badge>
           )}
-        </ScrollArea>
-      </div>
 
-      {/* Actions */}
-      <div className="mt-6 pt-4 border-t flex justify-between">
-        {/* Im not yet add onclick*/}
-        <Button variant="outline" size="sm" className="flex items-center gap-1.5">
-          <X className="h-4 w-4" />
-          Close
+          {job.salary && (
+            <Badge variant="outline" className="flex items-center gap-1">
+              <DollarSign className="h-3 w-3" />
+              {job.salary}
+            </Badge>
+          )}
+        </div>
+      </DialogHeader>
+
+      <ScrollArea className="mt-4 h-[calc(70vh-180px)] pr-4">
+        <Tabs defaultValue="description" className="w-full">
+          <TabsList
+            className={`grid w-full ${
+              showMatchTab ? "grid-cols-2" : "grid-cols-1"
+            } bg-slate-200`}
+          >
+            <TabsTrigger value="description">Job Description</TabsTrigger>
+            {showMatchTab && (
+              <TabsTrigger value="compatibility">Match Analysis</TabsTrigger>
+            )}
+          </TabsList>
+
+          <TabsContent value="description" className="pt-6">
+            <div
+              className="prose prose-slate max-w-none text-slate-600"
+              dangerouslySetInnerHTML={{ __html: job.description ?? "" }}
+            />
+          </TabsContent>
+
+          {showMatchTab && (
+            <TabsContent value="compatibility" className="pt-6">
+              {isLoading ? (
+                <div className="flex justify-center items-center h-32 text-sm text-slate-500">
+                  Checking compatibility...
+                </div>
+              ) : error ? (
+                <div className="text-red-500 text-sm text-center">
+                  {error}
+                </div>
+              ) : compatibility ? (
+                <JobCompatibility
+                  job={job}
+                  matchScore={Number(
+                    Math.min(job.similarityScore! * 100 + 70, 100).toFixed(1)
+                  )}
+                  compatibilityData={compatibility.compatibilityData}
+                  skillMatches={compatibility.skillMatches}
+                  experienceMatches={compatibility.experienceMatches}
+                />
+              ) : (
+                <div className="text-slate-500 text-sm text-center">
+                  No compatibility data found.
+                </div>
+              )}
+            </TabsContent>
+          )}
+        </Tabs>
+      </ScrollArea>
+
+      <div className="mt-6 flex justify-end gap-2">
+        <Button variant="outline">Close</Button>
+        <Button className="bg-secondary">
+          Apply Now
+          <ExternalLink className="ml-2 h-4 w-4" />
         </Button>
-
-        {job.url ? (
-          <Button
-            className="flex items-center gap-1.5"
-            size="sm"
-            onClick={handleApply}
-          >
-            <ExternalLink className="h-4 w-4" />
-            Apply Now
-          </Button>
-        ) : (
-          <Button
-            className="flex items-center gap-1.5"
-            size="sm"
-            disabled
-          >
-            <ExternalLink className="h-4 w-4" />
-            Application Link Unavailable
-          </Button>
-        )}
       </div>
-    </div>
-  )
+    </>
+  );
 }
-
