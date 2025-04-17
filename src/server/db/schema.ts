@@ -137,3 +137,4 @@ export const resumeVector = createTable("resume_vector", {
   embedding: vector('embedding', { dimensions: 1536 }),
   createdAt: timestamp('created_at').defaultNow(),
 })
+
