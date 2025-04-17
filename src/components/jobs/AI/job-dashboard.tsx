@@ -170,63 +170,7 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
         {/* Header */}
         <header className="top-0 z-10 bg-background backdrop-blur-md border-b border-t border-border-primary">
           <div className="container px-4 py-4">
-            <div className="mb-4">
-              <h1 className="text-2xl font-bold tracking-tight">Job Search</h1>
-              <p>{hasResumeVector ? "User has" : "not"}</p>
-              <p className="text-sm text-text-secondary">Find your next opportunity with AI-powered matching</p>
-            </div>
-
-            <div className="flex flex-col gap-4 sm:flex-row">
-              {/* Search Bar */}
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
-                <Input
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  placeholder="Search job titles, skills, or keywords..."
-                  className="pl-10 h-10"
-                />
-              </div>
-
-              {/* Controls */}
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="h-10" onClick={toggleSidebar}>
-                  <FilterIcon className="h-4 w-4 mr-2" />
-                  Filters
-                  {activeFilterCount > 0 && (
-                    <Badge variant="secondary" className="ml-2">
-                      {activeFilterCount}
-                    </Badge>
-                  )}
-                </Button>
-                <div className="flex items-center bg-background-secondary rounded-md">
-                  <Button
-                    variant={viewMode === "grid" ? "secondary" : "ghost"}
-                    size="sm"
-                    className="h-10 w-10 p-0"
-                    onClick={() => setViewMode("grid")}
-                  >
-                    <LayoutGrid className="h-4 w-4" />
-                    <span className="sr-only">Grid view</span>
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "secondary" : "ghost"}
-                    size="sm"
-                    className="h-10 w-10 p-0"
-                    onClick={() => setViewMode("list")}
-                  >
-                    <LayoutList className="h-4 w-4" />
-                    <span className="sr-only">List view</span>
-                  </Button>
-                </div>
-                <Button variant="ghost" size="icon" className="h-10 w-10" onClick={fetchJobs}>
-                  <RefreshCw className="h-4 w-4" />
-                  <span className="sr-only">Refresh</span>
-                </Button>
-              </div>
-            </div>
-
-            <div className="mt-6 mb-6">
+            <div className="mt-1 mb-2">
               <div
                 className={`rounded-xl ${useResumeMatch
                   ? "bg-gradient-to-r from-[#8A2BE2]/10 via-[#1E90FF]/10 to-[#00CED1]/10 border border-[#8A2BE2]/20"
@@ -334,6 +278,57 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
                 </div>
               </div>
             </div>
+
+            <div className="flex flex-col gap-4 sm:flex-row">
+              {/* Search Bar */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+                <Input
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  placeholder="Search job titles, skills, or keywords..."
+                  className="pl-10 h-10"
+                />
+              </div>
+
+              {/* Controls */}
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" className="h-10" onClick={toggleSidebar}>
+                  <FilterIcon className="h-4 w-4 mr-2" />
+                  Filters
+                  {activeFilterCount > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {activeFilterCount}
+                    </Badge>
+                  )}
+                </Button>
+                <div className="flex items-center bg-background-secondary rounded-md">
+                  <Button
+                    variant={viewMode === "grid" ? "secondary" : "ghost"}
+                    size="sm"
+                    className="h-10 w-10 p-0"
+                    onClick={() => setViewMode("grid")}
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                    <span className="sr-only">Grid view</span>
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "secondary" : "ghost"}
+                    size="sm"
+                    className="h-10 w-10 p-0"
+                    onClick={() => setViewMode("list")}
+                  >
+                    <LayoutList className="h-4 w-4" />
+                    <span className="sr-only">List view</span>
+                  </Button>
+                </div>
+                <Button variant="ghost" size="icon" className="h-10 w-10" onClick={fetchJobs}>
+                  <RefreshCw className="h-4 w-4" />
+                  <span className="sr-only">Refresh</span>
+                </Button>
+              </div>
+            </div>
+
           </div>
         </header>
 
