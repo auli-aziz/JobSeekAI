@@ -32,7 +32,6 @@ export default function JobDetailsPage() {
   const [job, setJob] = useState<Job | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [compatibilityLoading, setCompatibilityLoading] = useState(true);
   const [compatibility, setCompatibility] =
     useState<JobCompatibilityProps | null>(null);
 
@@ -65,7 +64,6 @@ export default function JobDetailsPage() {
 
         const compatibilityResult = await processProfile(dummyResume, foundJob);
         setCompatibility(compatibilityResult);
-        setCompatibilityLoading(false);
         console.log(compatibilityResult)
         console.log(compatibilityResult.compatibilityData)
       } catch (err) {
