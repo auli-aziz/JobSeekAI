@@ -1,66 +1,74 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { Card, CardContent } from "~/components/ui/card"
-import Image from "next/image"
-import { Button } from "~/components/ui/button"
-import { Badge } from "~/components/ui/badge"
-import { Dialog, DialogContent } from "~/components/ui/dialog"
-import { Briefcase, DollarSign, MapPin, Building, Clock, Star } from "lucide-react"
-import { useState } from "react"
-import { formatDistanceToNow } from "date-fns"
-import type { Job } from "~/types/jobs"
-import JobDetail from "./job-detail"
+import { Card, CardContent } from "~/components/ui/card";
+import Image from "next/image";
+import { Button } from "~/components/ui/button";
+import { Badge } from "~/components/ui/badge";
+import { Dialog, DialogContent } from "~/components/ui/dialog";
+import {
+  Briefcase,
+  DollarSign,
+  MapPin,
+  Building,
+  Clock,
+  Star,
+} from "lucide-react";
+import { useState } from "react";
+import { formatDistanceToNow } from "date-fns";
+import type { Job } from "~/types/jobs";
+import JobDetail from "./job-detail";
+import MatchScore from "../match-score";
 
 interface JobGridProps {
-  jobs: Job[]
+  jobs: Job[];
 }
 
 export default function JobGrid({ jobs }: JobGridProps) {
-  const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set())
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null)
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set());
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const toggleSaved = (jobId: number, event: React.MouseEvent) => {
-    event.stopPropagation()
-    const newSavedJobs = new Set(savedJobs)
+    event.stopPropagation();
+    const newSavedJobs = new Set(savedJobs);
     if (savedJobs.has(jobId.toString())) {
-      newSavedJobs.delete(jobId.toString())
+      newSavedJobs.delete(jobId.toString());
     } else {
-      newSavedJobs.add(jobId.toString())
+      newSavedJobs.add(jobId.toString());
     }
-    setSavedJobs(newSavedJobs)
-  }
+    setSavedJobs(newSavedJobs);
+  };
 
   const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return "Date not specified"
+    if (!dateString) return "Date not specified";
     try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true })
+      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
     } catch {
-      return dateString
+      return dateString;
     }
-  }
+  };
 
   const openJobDetail = (job: Job) => {
-    setSelectedJob(job)
-    setDialogOpen(true)
-  }
+    setSelectedJob(job);
+    setDialogOpen(true);
+  };
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {jobs.map((job) => (
           <Card
             key={job.id}
-            className="overflow-hidden hover:shadow-md transition-all border-border-primary cursor-pointer"
+            className="border-border-primary cursor-pointer overflow-hidden transition-all hover:shadow-md"
             onClick={() => openJobDetail(job)}
           >
             <CardContent className="p-0">
               {/* Card Header */}
-              <div className="p-4 border-b border-border-secondary flex justify-between">
+              <div className="border-border-secondary flex justify-between border-b p-4">
                 <div className="flex items-center space-x-4">
-                  <div className="h-10 w-10 rounded bg-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded bg-slate-100">
                     {job.company_logo ? (
                       <Image
                         src={job.company_logo}
@@ -74,9 +82,11 @@ export default function JobGrid({ jobs }: JobGridProps) {
                     )}
                   </div>
                   <div>
-                    <div className="text-sm font-medium leading-none">{job.company_name}</div>
-                    <div className="text-xs text-slate-500 mt-1 flex items-center">
-                      <Clock className="h-3 w-3 mr-1 inline" />
+                    <div className="text-sm leading-none font-medium">
+                      {job.company_name}
+                    </div>
+                    <div className="mt-1 flex items-center text-xs text-slate-500">
+                      <Clock className="mr-1 inline h-3 w-3" />
                       {formatDate(job.publication_date)}
                     </div>
                   </div>
@@ -84,13 +94,15 @@ export default function JobGrid({ jobs }: JobGridProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 rounded-full"
+                  className="h-8 w-8 rounded-full p-0"
                   onClick={(e) => toggleSaved(job.id, e)}
                 >
                   <Star
                     className="h-4 w-4"
                     fill={savedJobs.has(job.id.toString()) ? "#e7e032" : "none"}
-                    color={savedJobs.has(job.id.toString()) ? "#f1c232" : "#94a3b8"}
+                    color={
+                      savedJobs.has(job.id.toString()) ? "#f1c232" : "#94a3b8"
+                    }
                   />
                   <span className="sr-only">Save job</span>
                 </Button>
@@ -98,11 +110,23 @@ export default function JobGrid({ jobs }: JobGridProps) {
 
               {/* Card Body */}
               <div className="p-4">
-                <h3 className="font-semibold mb-2 line-clamp-2">{job.title}</h3>
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="mb-2 line-clamp-2 font-semibold">
+                    {job.title}
+                  </h3>
+                  <div className="flex-shrink-0">
+                    {job.similarityScore !== undefined && (
+                      <MatchScore
+                        score={Math.round(job.similarityScore * 100)}
+                        size="sm"
+                      />
+                    )}
+                  </div>
+                </div>
 
-                <div className="space-y-2 mb-4">
+                <div className="mb-4 space-y-2">
                   <div className="flex items-center text-sm">
-                    <MapPin className="h-4 w-4 mr-2 text-slate-400 flex-shrink-0" />
+                    <MapPin className="mr-2 h-4 w-4 flex-shrink-0 text-slate-400" />
                     <span className="truncate text-slate-600">
                       {job.location ?? "Location not specified"}
                     </span>
@@ -110,7 +134,7 @@ export default function JobGrid({ jobs }: JobGridProps) {
 
                   {job.job_type && (
                     <div className="flex items-center text-sm text-slate-600">
-                      <Briefcase className="h-4 w-4 mr-2 text-slate-400 flex-shrink-0" />
+                      <Briefcase className="mr-2 h-4 w-4 flex-shrink-0 text-slate-400" />
                       <span>
                         {job.job_type === "full_time"
                           ? "Full-time"
@@ -123,23 +147,15 @@ export default function JobGrid({ jobs }: JobGridProps) {
 
                   {job.salary && (
                     <div className="flex items-center text-sm text-slate-600">
-                      <DollarSign className="h-4 w-4 mr-2 text-slate-400 flex-shrink-0" />
+                      <DollarSign className="mr-2 h-4 w-4 flex-shrink-0 text-slate-400" />
                       <span>{job.salary}</span>
-                    </div>
-                  )}
-
-                  {job.similarityScore !== undefined && (
-                    <div className="flex items-center text-sm text-green-600">
-                      <Badge variant="outline" className="bg-green-50">
-                        {Math.round(job.similarityScore * 100)}% Match
-                      </Badge>
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Card Footer */}
-              <div className="px-4 py-3 border-t border-border-secondary bg-background flex justify-between items-center">
+              <div className="border-border-secondary bg-background flex items-center justify-between border-t px-4 py-3">
                 <Badge variant="outline" className="bg-background">
                   {job.category ?? "Uncategorized"}
                 </Badge>
@@ -152,11 +168,10 @@ export default function JobGrid({ jobs }: JobGridProps) {
 
       {/* Job Detail Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh]">
+        <DialogContent className="max-h-[90vh] max-w-3xl">
           {selectedJob && <JobDetail job={selectedJob} />}
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }
-
