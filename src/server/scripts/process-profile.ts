@@ -54,12 +54,18 @@ ${job.description}
   `.trim();
 
   const { text } = await generateText({
-    model: openai.chat("gpt-4.5-turbo"),
+    model: openai.chat("gpt-4o-mini"),
     messages: [{ role: "user", content: prompt }],
   });
 
-  const parsed = JSON.parse(text) as {
+  const cleanedText = text
+    .trim()
+    .replace(/^```json|```$/g, "")
+    .trim();
+    
+  const parsed = JSON.parse(cleanedText) as {
     matchScore: number;
+    AIRecommendation: string;
     compatibilityData: CompatibilityItem[];
     skillMatches: SkillMatch[];
     experienceMatches: ExperienceMatch[];

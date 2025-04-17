@@ -5,33 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { Card, CardContent } from "~/components/ui/card"
 import { Badge } from "~/components/ui/badge"
 import { CheckCircle2, XCircle, AlertCircle, Sparkles } from "lucide-react"
-import type { Job } from "~/types/jobs"
+import type { JobCompatibilityProps } from "~/types/jobs"
 import MatchScore from "~/components/jobs/match-score"
-
-interface CompatibilityItem {
-  type: "pro" | "con"
-  category: "skills" | "experience" | "education" | "other"
-  text: string
-}
-
-interface SkillMatch {
-  skill: string
-  match: number
-}
-
-interface ExperienceMatch {
-  area: string
-  years: number
-  required: number
-}
-
-interface JobCompatibilityProps {
-  job: Job
-  matchScore: number
-  compatibilityData: CompatibilityItem[]
-  skillMatches: SkillMatch[]
-  experienceMatches: ExperienceMatch[]
-}
 
 export default function JobCompatibility({
   job,

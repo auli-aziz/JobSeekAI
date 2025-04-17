@@ -2,7 +2,7 @@ import { Skeleton } from "~/components/ui/skeleton"
 
 export default function JobDetailsLoading() {
   return (
-    <div className="min-h-screen bg-slate-50 pb-16">
+    <div className="min-h-screen bg-background pb-16">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="container max-w-5xl px-4 py-4">

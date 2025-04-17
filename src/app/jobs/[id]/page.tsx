@@ -30,11 +30,11 @@ export default function JobDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const [job, setJob] = useState<Job | null>(null);
-  const [compatibility, setCompatibility] =
-    useState<JobCompatibilityProps | null>(null);
-  const [compatibilityLoading, setCompatibilityLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [compatibilityLoading, setCompatibilityLoading] = useState(true);
+  const [compatibility, setCompatibility] =
+    useState<JobCompatibilityProps | null>(null);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -63,12 +63,11 @@ export default function JobDetailsPage() {
 
         setJob(foundJob);
 
-        const compatibilityResult = await processProfile(
-          dummyResume,
-          foundJob,
-        );
+        const compatibilityResult = await processProfile(dummyResume, foundJob);
         setCompatibility(compatibilityResult);
         setCompatibilityLoading(false);
+        console.log(compatibilityResult)
+        console.log(compatibilityResult.compatibilityData)
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -78,14 +77,6 @@ export default function JobDetailsPage() {
 
     void fetchJob();
   }, [params.id]);
-
-  // Generate a consistent but random-looking match score based on job ID
-  const generateMatchScore = (jobId: number): number => {
-    // Use the job ID as a seed to generate a consistent score
-    const seed = jobId % 100;
-    // Generate a score between 55 and 95
-    return Math.floor(55 + (seed % 41));
-  };
 
   const formatDate = (dateString: string) => {
     try {
@@ -117,7 +108,7 @@ export default function JobDetailsPage() {
 
   if (error || !job) {
     return (
-      <div className="min-h-screen bg-slate-50 py-8">
+      <div className="min-h-screen bg-background py-8">
         <div className="w-full px-4 py-8 lg:px-20">
           <Button
             variant="ghost"
@@ -141,8 +132,6 @@ export default function JobDetailsPage() {
       </div>
     );
   }
-
-  const matchScore = generateMatchScore(job.id);
 
   return (
     <div className="bg-background min-h-screen pb-16">
@@ -195,7 +184,7 @@ export default function JobDetailsPage() {
                   </div>
                 </div>
                 <div className="hidden sm:block">
-                  <MatchScore score={matchScore} size="lg" />
+                  <MatchScore score={compatibility!.matchScore} size="lg" />
                 </div>
               </div>
 
@@ -245,7 +234,13 @@ export default function JobDetailsPage() {
                 </TabsContent>
 
                 <TabsContent value="compatibility" className="pt-6">
-                  <JobCompatibility job={job} matchScore={matchScore} />
+                  <JobCompatibility
+                    job={job}
+                    matchScore={compatibility!.matchScore}
+                    compatibilityData={compatibility!.compatibilityData}
+                    skillMatches={compatibility!.skillMatches}
+                    experienceMatches={compatibility!.experienceMatches}
+                  />
                 </TabsContent>
               </Tabs>
             </div>
@@ -255,7 +250,7 @@ export default function JobDetailsPage() {
           <div className="space-y-6">
             {/* Mobile Match Score */}
             <div className="mb-4 flex justify-center sm:hidden">
-              <MatchScore score={matchScore} size="lg" />
+              <MatchScore score={compatibility!.matchScore} size="lg" />
             </div>
 
             {/* Apply Card */}
@@ -264,7 +259,7 @@ export default function JobDetailsPage() {
                 Ready to Apply?
               </h2>
               <p className="mb-6 text-sm text-slate-600">
-                This job is a {matchScore}% match for your profile. Apply now to
+                This job is a {compatibility!.matchScore}% match for your profile. Apply now to
                 connect with {job.company_name}.
               </p>
               <div className="flex flex-col space-y-3">
