@@ -17,7 +17,7 @@ export default function JobDetail({ job }: JobDetailProps) {
     if (!dateString) return "Unknown date"
     try {
       return format(new Date(dateString), "PPP")
-    } catch (error) {
+    } catch {
       return "Invalid date"
     }
   }

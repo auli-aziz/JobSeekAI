@@ -6,6 +6,7 @@
   --color-background: var(--background);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
   --color-button: var(--button);
   --color-buttonSecondary: var(--button-secondary);
   --color-selected: var(--selected);
@@ -31,6 +32,7 @@
   :root {
     --primary: #333366;
     --secondary: #097fa5;
+    --tertiary: #ededed;
     --background: #ededed;
     --background-secondary: #c8dde3;
     --button: #097fa5;
@@ -52,6 +54,7 @@
   .dark {
     --primary: #d6deff;
     --secondary: #0ba6d1;
+    --tertiary: #d6deff;
     --background: #121212;
     --background-secondary: #1b1b1b;
     --button: #097fa5;
