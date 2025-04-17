@@ -15,8 +15,6 @@ import { useDebounce } from "~/hooks/use-debounce"
 import { cn } from "~/lib/utils"
 import type { Job } from "~/types/jobs"
 import { Switch } from "~/components/ui/switch"
-import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "~/components/ui/dialog"
-import { ScrollArea } from "~/components/ui/scroll-area"
 
 // Type to match our custom API response
 type ApiJobsResponse = {
