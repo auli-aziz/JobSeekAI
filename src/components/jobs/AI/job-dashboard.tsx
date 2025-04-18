@@ -29,7 +29,6 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [ showResumeDialog, setShowResumeDialog] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("")
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("")
@@ -356,49 +355,6 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
                           : "Enable to find jobs that match your skills and experience"}
                       </p>
                     </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 w-full sm:w-auto">
-                    {!hasResumeVector ? (
-                      <Button
-                        variant={useResumeMatch ? "default" : "outline"}
-                        className={`relative overflow-hidden group transition-all duration-500 ${useResumeMatch
-                          ? "bg-gradient-to-r from-vibrant-purple to-vibrant-blue text-white"
-                          : "border-vibrant-purple hover:border-vibrant-purple/80"
-                        } rounded-xl pulse-on-hover`}
-                        onClick={() => setShowResumeDialog(true)}
-                      >
-                        <Upload className="h-4 w-4 mr-2" />
-                        Upload Resume
-                        {!useResumeMatch && (
-                          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-vibrant-purple/20 to-vibrant-blue/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></span>
-                        )}
-                      </Button>
-                    ) : (
-                      <div className="flex items-center gap-3">
-                        <Switch
-                          id="resume-match"
-                          checked={useResumeMatch}
-                          onCheckedChange={setUseResumeMatch}
-                          className={`${useResumeMatch ? "bg-gradient-to-r from-vibrant-purple to-vibrant-blue" : ""} data-[state=checked]:bg-vibrant-purple`}
-                        />
-                        <label htmlFor="resume-match" className="text-sm flex items-center cursor-pointer">
-                          <span>Match to my resume</span>
-                        </label>
-                      </div>
-                    )}
-
-                    {hasResumeVector && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowResumeDialog(true)}
-                        className="text-xs hover:text-vibrant-purple hover:bg-vibrant-purple/10"
-                      >
-                        <FileText className="h-3 w-3 mr-1" />
-                        View Resume
-                      </Button>
-                    )}
                   </div>
                 </div>
 
