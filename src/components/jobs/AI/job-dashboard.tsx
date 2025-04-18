@@ -15,8 +15,6 @@ import { useDebounce } from "~/hooks/use-debounce"
 import { cn } from "~/lib/utils"
 import type { Job } from "~/types/jobs"
 import { Switch } from "~/components/ui/switch"
-import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "~/components/ui/dialog"
-import { ScrollArea } from "~/components/ui/scroll-area"
 
 // Type to match our custom API response
 type ApiJobsResponse = {
@@ -29,7 +27,7 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showResumeDialog, setShowResumeDialog] = useState(false)
+  const [ showResumeDialog, setShowResumeDialog] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("")
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("")
@@ -260,7 +258,7 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
                         className={`relative overflow-hidden group transition-all duration-500 ${useResumeMatch
                           ? "bg-gradient-to-r from-vibrant-purple to-vibrant-blue text-white"
                           : "border-vibrant-purple hover:border-vibrant-purple/80"
-                          } rounded-xl pulse-on-hover`}
+                        } rounded-xl pulse-on-hover`}
                         onClick={() => setShowResumeDialog(true)}
                       >
                         <Upload className="h-4 w-4 mr-2" />

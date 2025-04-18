@@ -139,7 +139,7 @@ export const resumeVector = createTable("resume_vector", {
 })
 
 //Profile
-export const profileDetails = createTable("profile_detail", (d) => ({
+export const profileDetails = createTable("profile_detail", () => ({
   id: serial("id").primaryKey(),
   userId: varchar("user_id", { length: 255 })
     .notNull()
@@ -154,7 +154,7 @@ export const profileDetails = createTable("profile_detail", (d) => ({
 }));  
 
 //Skills
-export const skills = createTable("skill", (d) => ({
+export const skills = createTable("skill", () => ({
   id: serial("id").primaryKey(),
   profileDetailsId: integer("profil_details_id")
     .notNull()
@@ -163,7 +163,7 @@ export const skills = createTable("skill", (d) => ({
 }));
 
 //Experience
-export const experiences = createTable("experience", (d) => ({
+export const experiences = createTable("experience", () => ({
   id: serial("id").primaryKey(),
   profileDetailsId: integer("profil_details_id")
     .notNull()
@@ -175,7 +175,7 @@ export const experiences = createTable("experience", (d) => ({
 }));
 
 //Education
-export const educations = createTable("education", (d) => ({
+export const educations = createTable("education", () => ({
   id: serial("id").primaryKey(),
   profileDetailsId: integer("profil_details_id")
     .notNull()
@@ -186,7 +186,7 @@ export const educations = createTable("education", (d) => ({
 }));
 
 //Certifications
-export const certifications = createTable("certification", (d) => ({
+export const certifications = createTable("certification", () => ({
   id: serial("id").primaryKey(),
   profileDetailsId: integer("profil_details_id")
     .notNull()

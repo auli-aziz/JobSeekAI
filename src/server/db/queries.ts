@@ -12,7 +12,7 @@ import {
   educations,
   certifications,
 } from "./schema";
-import { get } from 'http';
+// import { get } from 'http';
 
 const openai = createOpenAI({
   compatibility: 'compatible', // strict mode, enable when using the OpenAI API
