@@ -8,6 +8,7 @@ import { SignOutButton } from "./AuthButton";
 import { FaUserTie } from "react-icons/fa6";
 import { FaSignInAlt } from "react-icons/fa";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { BriefcaseBusiness } from "lucide-react";
 
 export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,9 +19,9 @@ export const Header = () => {
     <header className="relative mx-auto flex max-w-screen-2xl items-center justify-between p-5">
       {/* Logo */}
       <Link href={"/"}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1">
           <div className="flex h-14 w-14 items-center justify-center">
-            <FaUserTie className="text-3xl" />
+            <BriefcaseBusiness size={32} />
           </div>
           <strong className="text-primary text-lg select-none">
             JobSeekAI
