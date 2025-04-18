@@ -137,3 +137,85 @@ export const resumeVector = createTable("resume_vector", {
   embedding: vector('embedding', { dimensions: 1536 }),
   createdAt: timestamp('created_at').defaultNow(),
 })
+
+//Profile
+export const profileDetails = createTable("profile_detail", (d) => ({
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id", { length: 255 })
+    .notNull()
+    .references(() => users.id),
+  name: varchar("name", { length: 255 }),
+  email: varchar("email", { length: 255 }),
+  title: varchar("title", { length: 255 }),
+  location: varchar("location", { length: 255 }),
+  phone: varchar("phone", { length: 255 }),
+  joinDate: timestamp("join_date").defaultNow(),
+  about: text("about"),
+}));  
+
+//Skills
+export const skills = createTable("skill", (d) => ({
+  id: serial("id").primaryKey(),
+  profileDetailsId: integer("profil_details_id")
+    .notNull()
+    .references(() => profileDetails.id),
+  name: text("name").notNull(),
+}));
+
+//Experience
+export const experiences = createTable("experience", (d) => ({
+  id: serial("id").primaryKey(),
+  profileDetailsId: integer("profil_details_id")
+    .notNull()
+    .references(() => profileDetails.id),
+  role: varchar("role", { length: 255 }).notNull(),
+  company: varchar("company", { length: 255 }).notNull(),
+  period: varchar("period", { length: 255 }).notNull(),
+  description: text("description"),
+}));
+
+//Education
+export const educations = createTable("education", (d) => ({
+  id: serial("id").primaryKey(),
+  profileDetailsId: integer("profil_details_id")
+    .notNull()
+    .references(() => profileDetails.id),
+  degree: varchar("degree", { length: 255 }).notNull(),
+  institution: varchar("institution", { length: 255 }).notNull(),
+  period: varchar("period", { length: 255 }).notNull(),
+}));
+
+//Certifications
+export const certifications = createTable("certification", (d) => ({
+  id: serial("id").primaryKey(),
+  profileDetailsId: integer("profil_details_id")
+    .notNull()
+    .references(() => profileDetails.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  issuer: varchar("issuer", { length: 255 }),
+  date: varchar("date", { length: 255 }), // Bisa juga timestamp, tergantung kebutuhan
+}));
+
+//Relation
+export const profileRelations = relations(profileDetails, ({ one }) => ({
+  user: one(users, { fields: [profileDetails.userId], references: [users.id] }),
+}));
+
+export const skillsRelations = relations(skills, ({ one }) => ({
+  profileDetail: one(profileDetails, {
+    fields: [skills.profileDetailsId],
+    references: [profileDetails.id],
+  }),
+}));
+
+export const experiencesRelations = relations(experiences, ({ one }) => ({
+  profileDetail: one(profileDetails, { fields: [experiences.profileDetailsId], references: [profileDetails.id] }),
+}));
+
+export const educationsRelations = relations(educations, ({ one }) => ({
+  profileDetail: one(profileDetails, { fields: [educations.profileDetailsId], references: [profileDetails.id] }),
+}));
+
+export const certificationsRelations = relations(certifications, ({ one }) => ({
+  profileDetail: one(profileDetails, { fields: [certifications.profileDetailsId], references: [profileDetails.id] }),
+}));

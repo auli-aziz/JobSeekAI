@@ -8,6 +8,13 @@
       "when": 1744177434530,
       "tag": "0000_brave_deathbird",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1744876128632,
+      "tag": "0001_orange_karma",
+      "breakpoints": true
     }
   ]
 }

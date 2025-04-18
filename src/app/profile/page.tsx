@@ -1,8 +1,4 @@
-"use client"
-
-import { useState } from "react"
 import { Button } from "~/components/ui/button"
-import { Input } from "~/components/ui/input"
 import { Badge } from "~/components/ui/badge"
 import { Card, CardContent } from "~/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
@@ -19,80 +15,20 @@ import {
   Calendar,
   Edit,
   Plus,
-  Search,
 } from "lucide-react"
+import { getResumebyProfileId, getProfileByUserId } from "~/server/db/queries"
+import { auth } from "~/server/auth"
+import Link from "next/link"
 
-// Mock user data
-const user = {
-  name: "Alex Johnson",
-  title: "Senior Software Engineer",
-  location: "San Francisco, CA",
-  email: "alex.johnson@example.com",
-  phone: "+1 (555) 123-4567",
-  joinDate: "January 2020",
-  about:
-    "Passionate software engineer with 8+ years of experience building scalable web applications. Specialized in React, Node.js, and cloud architecture. Committed to writing clean, maintainable code and mentoring junior developers.",
-  skills: ["React", "TypeScript", "Node.js", "AWS", "GraphQL", "Docker", "CI/CD", "Agile"],
-  experience: [
-    {
-      id: 1,
-      role: "Senior Software Engineer",
-      company: "TechCorp Inc.",
-      period: "2020 - Present",
-      description:
-        "Lead developer for the company's flagship product. Architected and implemented major features that increased user engagement by 45%.",
-    },
-    {
-      id: 2,
-      role: "Software Engineer",
-      company: "WebSolutions",
-      period: "2017 - 2020",
-      description:
-        "Developed and maintained client-facing applications. Reduced load times by 30% through performance optimizations.",
-    },
-    {
-      id: 3,
-      role: "Junior Developer",
-      company: "StartupHub",
-      period: "2015 - 2017",
-      description:
-        "Worked on front-end development for various startup clients. Collaborated with designers to implement pixel-perfect UIs.",
-    },
-  ],
-  education: [
-    {
-      id: 1,
-      degree: "M.S. Computer Science",
-      institution: "Stanford University",
-      period: "2013 - 2015",
-    },
-    {
-      id: 2,
-      degree: "B.S. Computer Science",
-      institution: "University of California, Berkeley",
-      period: "2009 - 2013",
-    },
-  ],
-  certifications: [
-    {
-      id: 1,
-      name: "AWS Certified Solutions Architect",
-      issuer: "Amazon Web Services",
-      date: "2021",
-    },
-    {
-      id: 2,
-      name: "Professional Scrum Master I",
-      issuer: "Scrum.org",
-      date: "2019",
-    },
-  ],
-}
-
-export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState("overview")
-  const [searchTerm, setSearchTerm] = useState("")
-
+export default async function ProfilePage() {
+  const session = await auth()
+  if(!session){
+    console.log("User not authenticated")
+  }
+  const user = session?.user
+  const userId = await getProfileByUserId(user?.id ?? "yuhu")
+  const profileData = await getResumebyProfileId(userId?.id ?? 2)
+  
   return (
     <div className="flex min-h-screen bg-background">
       {/* Main Content */}
@@ -107,48 +43,56 @@ export default function ProfilePage() {
                   <Settings className="h-4 w-4 mr-2" />
                   Settings
                 </Button>
-                <Button size="sm">
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Profile
-                </Button>
+                <Link href="/edit-profile">
+                  <Button size="sm">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
         </header>
+        {/* <p>{JSON.stringify(profileData, null, 2)}</p> */}
 
         {/* Profile Overview */}
         <div className="container px-4 py-6">
           <Card className="mb-6 border-border-primary">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-                <Avatar className="h-24 w-24 border-2 border-white shadow-sm">
-                  <AvatarImage src="/placeholder.svg?height=96&width=96" alt={user.name} />
-                  <AvatarFallback>
-                    {user.name
+              <Avatar className="h-24 w-24 border-2 border-white shadow-sm">
+              <AvatarImage
+                src="/placeholder.svg?height=96&width=96"
+                alt={user?.name ?? "User"} // Handle undefined or null with a fallback
+              />
+              <AvatarFallback>
+                {user?.name
+                  ? user.name
                       .split(" ")
                       .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
+                      .join("")
+                  : "UN"} {/* Fallback initials if name is not available */}
+              </AvatarFallback>
+            </Avatar>
 
                 <div className="flex-1">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                      <h2 className="text-2xl font-bold text-slate-900">{user.name}</h2>
-                      <p className="text-slate-600">{user.title}</p>
+                      <h2 className="text-2xl font-bold text-slate-900">{profileData?.name}</h2>
+                      <p className="text-slate-600">{profileData?.title}</p>
 
                       <div className="flex flex-wrap gap-2 mt-2">
                         <div className="flex items-center text-sm text-slate-500">
                           <MapPin className="h-4 w-4 mr-1" />
-                          {user.location}
+                          {/* {profileData?.} */}
                         </div>
                         <div className="flex items-center text-sm text-slate-500">
                           <Mail className="h-4 w-4 mr-1" />
-                          {user.email}
+                          {profileData?.email}
                         </div>
                         <div className="flex items-center text-sm text-slate-500">
                           <Calendar className="h-4 w-4 mr-1" />
-                          Joined {user.joinDate}
+                          {/* Joined {profileData?.joinDate} */}
                         </div>
                       </div>
                     </div>
@@ -170,7 +114,7 @@ export default function ProfilePage() {
           </Card>
 
           {/* Tabs Navigation */}
-          <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <Tabs defaultValue="overview" className="space-y-4">
             <div className="flex justify-between items-center">
               <TabsList>
                 <TabsTrigger value="overview" className="data-[state=active]:bg-slate-100">
@@ -190,16 +134,6 @@ export default function ProfilePage() {
                   Certifications
                 </TabsTrigger>
               </TabsList>
-
-              <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <Input
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search profile..."
-                  className="pl-10 h-9"
-                />
-              </div>
             </div>
 
             {/* Overview Tab */}
@@ -208,7 +142,7 @@ export default function ProfilePage() {
               <Card>
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold mb-3">About</h3>
-                  <p className="text-slate-600">{user.about}</p>
+                  <p className="text-slate-600">{profileData?.about}</p>
                 </CardContent>
                 <CardContent className="p-6">
                   <div className="flex justify-between items-center mb-3">
@@ -219,9 +153,9 @@ export default function ProfilePage() {
                     </Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {user.skills.map((skill, index) => (
+                    {profileData?.skills.map((skill, index) => (
                       <Badge key={index} variant="secondary" className="px-3 py-1">
-                        {skill}
+                        {/* {skill} */}
                       </Badge>
                     ))}
                   </div>
@@ -233,12 +167,12 @@ export default function ProfilePage() {
                 <CardContent className="p-6">
                   <div className="flex justify-between items-center mb-3">
                     <h3 className="text-lg font-semibold">Experience</h3>
-                    <Button variant="ghost" size="sm" onClick={() => setActiveTab("experience")}>
+                    <Button variant="ghost" size="sm">
                       View All
                     </Button>
                   </div>
                   <div className="space-y-4">
-                    {user.experience.slice(0, 2).map((exp) => (
+                    {profileData?.experiences.slice(0, 2).map((exp) => (
                       <div key={exp.id} className="flex gap-4">
                         <div className="h-10 w-10 rounded bg-slate-100 flex items-center justify-center">
                           <Briefcase className="h-5 w-5 text-slate-500" />
@@ -268,7 +202,7 @@ export default function ProfilePage() {
                     </Button>
                   </div>
                   <div className="space-y-8">
-                    {user.experience.map((exp) => (
+                    {profileData?.experiences.map((exp) => (
                       <div key={exp.id} className="relative pl-8 pb-8 border-l border-slate-200 last:pb-0">
                         <div className="absolute left-0 top-0 -translate-x-1/2 h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center">
                           <Briefcase className="h-3 w-3 text-slate-500" />
@@ -300,7 +234,7 @@ export default function ProfilePage() {
                     </Button>
                   </div>
                   <div className="space-y-8">
-                    {user.education.map((edu) => (
+                    {profileData?.educations.map((edu) => (
                       <div key={edu.id} className="relative pl-8 pb-8 border-l border-slate-200 last:pb-0">
                         <div className="absolute left-0 top-0 -translate-x-1/2 h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center">
                           <BookOpen className="h-3 w-3 text-slate-500" />
@@ -331,7 +265,7 @@ export default function ProfilePage() {
                     </Button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {user.certifications.map((cert) => (
+                    {profileData?.certifications.map((cert) => (
                       <Card key={cert.id} className="border-slate-200">
                         <CardContent className="p-4 flex gap-4">
                           <div className="h-10 w-10 rounded bg-slate-100 flex items-center justify-center">
