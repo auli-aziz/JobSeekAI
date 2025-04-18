@@ -3,9 +3,16 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { embed } from 'ai';
 import { env } from '~/env';
 import { db } from '.';
-import { jobList, resumeVector } from './schema';
-import { eq, sql, cosineDistance } from 'drizzle-orm';
-
+import { resumeVector } from './schema';
+import { eq } from 'drizzle-orm';
+import {
+  profileDetails,
+  skills,
+  experiences,
+  educations,
+  certifications,
+} from "./schema";
+// import { get } from 'http';
 
 const openai = createOpenAI({
   compatibility: 'compatible', // strict mode, enable when using the OpenAI API
@@ -60,29 +67,55 @@ export async function hasResume(userId: string): Promise<boolean> {
   return result.length > 0
 }
 
-export async function getJobAndResume(jobId: number, userId: string) {
-  const getResumeVector = await db
-    .select({
-      embedding: resumeVector.embedding
-    })
-    .from(resumeVector)
-    .where(eq(resumeVector.userId, userId))
-    .limit(1)
+export async function getResumebyProfileId(profileId: number) {
+  try {
+    const profile = await db.select().from(profileDetails).where(eq(profileDetails.id, profileId)).limit(1);
 
-  const resumeEmbedding = getResumeVector[0]?.embedding;
+    const [skillsList, experienceList, educationList, certificationList] = await Promise.all([
+      db.select().from(skills).where(eq(skills.profileDetailsId, profileId)),
+      db.select().from(experiences).where(eq(experiences.profileDetailsId, profileId)),
+      db.select().from(educations).where(eq(educations.profileDetailsId, profileId)),
+      db.select().from(certifications).where(eq(certifications.profileDetailsId, profileId)),
+    ]);
 
-  if (!resumeEmbedding) {
-    throw new Error("Resume embedding not found");
+    const fullProfile = {
+      ...profile[0],
+      skills: skillsList,
+      experiences: experienceList,
+      educations: educationList,
+      certifications: certificationList,
+    };
+    return fullProfile;
+  } catch (error) {
+    console.error(error)
   }
-
-  const similarity = sql<number>`1 - (${cosineDistance(jobList.embedding, resumeEmbedding)})`;
-
-  const result = await db
-    .select({
-      similarity,
-    }
-    )
-    .from(jobList)
-    .where(eq(jobList.jobId, jobId))
-  return result
 }
+
+export async function getProfileByUserId(userId: string) {
+  try {
+    const profile = await db
+      .select()
+      .from(profileDetails)
+      .where(eq(profileDetails.userId, userId))
+      .limit(1);
+    
+    // return profile[0]?.id;  // Return the id if available, otherwise undefined
+    return profile[0]; 
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error retrieving profile');
+  }
+}
+
+export async function updateProfileDetails(userId: string, data: {
+  title?: string
+  location?: string
+  phone?: string
+  about?: string
+}) {
+  return db
+    .update(profileDetails)
+    .set(data)
+    .where(eq(profileDetails.userId, userId))
+}
+
