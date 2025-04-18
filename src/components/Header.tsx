@@ -5,7 +5,6 @@ import { useState } from "react";
 import ThemeSwitch from "./ThemeSwitch";
 import { useSession } from "next-auth/react";
 import { SignOutButton } from "./AuthButton";
-import { FaUserTie } from "react-icons/fa6";
 import { FaSignInAlt } from "react-icons/fa";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { BriefcaseBusiness } from "lucide-react";

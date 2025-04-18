@@ -4,7 +4,7 @@ import { embed } from 'ai';
 import { env } from '~/env';
 import { db } from '.';
 import { resumeVector } from './schema';
-import { eq } from 'drizzle-orm';
+import { eq, sql, cosineDistance } from 'drizzle-orm';
 import {
   profileDetails,
   skills,
@@ -12,7 +12,7 @@ import {
   educations,
   certifications,
 } from "./schema";
-// import { get } from 'http';
+import { jobList } from './schema';
 
 const openai = createOpenAI({
   compatibility: 'compatible', // strict mode, enable when using the OpenAI API
@@ -91,6 +91,46 @@ export async function getResumebyProfileId(profileId: number) {
   }
 }
 
+export async function getJobAndResume(jobId: number, userId: string) {
+  const getResumeVector = await db
+    .select({
+      embedding: resumeVector.embedding
+    })
+    .from(resumeVector)
+    .where(eq(resumeVector.userId, userId))
+    .limit(1)
+
+  const resumeEmbedding = getResumeVector[0]?.embedding;
+
+  if (!resumeEmbedding) {
+    throw new Error("Resume embedding not found");
+  }
+
+  const similarity = sql<number>`1 - (${cosineDistance(jobList.embedding, resumeEmbedding)})`;
+
+  const result = await db
+    .select({
+      id: jobList.id,
+      job_id: jobList.jobId,
+      title: jobList.title,
+      company_name: jobList.companyName,
+      company_logo: jobList.companyLogo,
+      category: jobList.category,
+      job_type: jobList.jobType,
+      publication_date: jobList.publicationDate,
+      location: jobList.location,
+      salary: jobList.salary,
+      url: jobList.url,
+      description: jobList.description,
+      similarity,
+    }
+    )
+    .from(jobList)
+    .where(eq(jobList.jobId, jobId))
+    .limit(1)
+  return result[0]
+}
+
 export async function getProfileByUserId(userId: string) {
   try {
     const profile = await db
@@ -98,9 +138,9 @@ export async function getProfileByUserId(userId: string) {
       .from(profileDetails)
       .where(eq(profileDetails.userId, userId))
       .limit(1);
-    
+
     // return profile[0]?.id;  // Return the id if available, otherwise undefined
-    return profile[0]; 
+    return profile[0];
   } catch (error) {
     console.error(error);
     throw new Error('Error retrieving profile');

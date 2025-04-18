@@ -37,6 +37,7 @@ export function ResumeUploadDialog({ children }: { children: React.ReactNode }) 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [extractState, extractAction, extractIsPending] = useActionState(extractDataFromResume, initialState)
+  console.log(extractState)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] ?? null
