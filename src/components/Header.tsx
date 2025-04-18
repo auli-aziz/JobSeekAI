@@ -33,7 +33,7 @@ export const Header = () => {
         {/* Desktop Navigation (now beside ThemeSwitch) */}
         <nav className="mr-10 flex items-center gap-5">
           <Link href="/about">About</Link>
-          <Link href="/jobs">Jobs</Link>
+          <Link href="/jobs-ai">Jobs</Link>
           <Link href="/profile">Profile</Link>
         </nav>
 

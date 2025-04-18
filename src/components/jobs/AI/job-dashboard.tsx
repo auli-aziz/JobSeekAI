@@ -106,7 +106,6 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
     void fetchJobs()
   }, [fetchJobs])
 
-  // Apply client-side filters for salary 
   // (other filters are handled by the API)
   useEffect(() => {
     let result = jobs
