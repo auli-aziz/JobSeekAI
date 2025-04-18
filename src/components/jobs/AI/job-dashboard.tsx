@@ -16,6 +16,7 @@ import { cn } from "~/lib/utils"
 import type { Job } from "~/types/jobs"
 import { Switch } from "~/components/ui/switch"
 import Link from "next/link"
+import { ResumeUploadDialog } from "~/components/resume-uploader"
 
 // Type to match our custom API response
 type ApiJobsResponse = {
@@ -206,33 +207,35 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
 
                   <div className="flex items-center gap-3 w-full sm:w-auto">
                     {!hasResumeVector ? (
-                      <Button
-                        variant={useResumeMatch ? "default" : "outline"}
-                        className={`relative overflow-hidden group transition-all duration-500 rounded-xl pulse-on-hover ${useResumeMatch ? "text-white" : ""
-                          }`}
-                        style={
-                          useResumeMatch
-                            ? {
-                              background:
-                                "linear-gradient(to right, #8A2BE2, #1E90FF)",
-                            }
-                            : {
-                              borderColor: "#8A2BE2",
-                            }
-                        }
-                      >
-                        <Upload className="h-4 w-4 mr-2" />
-                        Upload Resume
-                        {!useResumeMatch && (
-                          <span
-                            className="absolute inset-0 w-full h-full transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"
-                            style={{
-                              background:
-                                "linear-gradient(to right, rgba(138,43,226,0.2), rgba(30,144,255,0.2))",
-                            }}
-                          ></span>
-                        )}
-                      </Button>
+                      <ResumeUploadDialog>
+                        <Button
+                          variant={useResumeMatch ? "default" : "outline"}
+                          className={`relative overflow-hidden group transition-all duration-500 rounded-xl pulse-on-hover ${useResumeMatch ? "text-white" : ""
+                            }`}
+                          style={
+                            useResumeMatch
+                              ? {
+                                background:
+                                  "linear-gradient(to right, #8A2BE2, #1E90FF)",
+                              }
+                              : {
+                                borderColor: "#8A2BE2",
+                              }
+                          }
+                        >
+                          <Upload className="h-4 w-4 mr-2" />
+                          Upload Resume
+                          {!useResumeMatch && (
+                            <span
+                              className="absolute inset-0 w-full h-full transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"
+                              style={{
+                                background:
+                                  "linear-gradient(to right, rgba(138,43,226,0.2), rgba(30,144,255,0.2))",
+                              }}
+                            ></span>
+                          )}
+                        </Button>
+                      </ResumeUploadDialog>
                     ) : (
                       <div className="flex items-center gap-3">
                         <Switch
