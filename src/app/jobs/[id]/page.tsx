@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { processProfile } from "~/server/scripts/process-profile";
+import { processProfile } from "~/lib/actions/process-profile";
 import { dummyResume } from "~/data/dummy-resume";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
