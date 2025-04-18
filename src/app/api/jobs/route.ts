@@ -1,6 +1,6 @@
 import { db } from '~/server/db';
-import { resumeVector } from '~/server/db/schema';
-import { sql, eq } from 'drizzle-orm';
+import { jobList, resumeVector } from '~/server/db/schema';
+import { sql, eq, ilike, and, cosineDistance, desc } from 'drizzle-orm';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -13,7 +13,6 @@ export async function GET(req: NextRequest) {
     const location = searchParams.get('location');
     const limit = parseInt(searchParams.get('limit') ?? '10');
 
-    console.log('Filters:', { category, jobType, location, userId });
 
     // eslint-disable-next-line prefer-const
     let filterConditions = [];
@@ -28,89 +27,79 @@ export async function GET(req: NextRequest) {
     if (location && location.trim() !== '') {
       filterConditions.push(`location ILIKE '%${location}%'`);
     }
+    const conditions = []
+
+    if (category && category.trim() !== '') {
+      conditions.push(ilike(jobList.category, category));
+    }
+
+    if (jobType && jobType.trim() !== '') {
+      conditions.push(eq(jobList.jobType, jobType));
+    }
+
+    if (location && location.trim() !== '') {
+      conditions.push(ilike(jobList.location, `%${location}%`));
+    }
 
     // Regular search without resume matching
     if (!userId) {
-      // Prepare a SQL query for regular search
-      const regularQuery = `
-        SELECT 
-          id, "job_id", title, "company_name", "company_logo", 
-          category, "job_type", "publication_date", location, 
-          salary, url, description
-        FROM ajf_job_list
-        ${filterConditions.length > 0 ? 'WHERE ' + filterConditions.join(' AND ') : ''}
-        ORDER BY "publication_date" DESC
-        LIMIT ${limit}
-      `;
-
-      console.log('Regular query:', regularQuery);
-      const jobs = await db.execute(sql.raw(regularQuery));
+      const jobs = await db
+        .select({
+          id: jobList.id,
+          job_id: jobList.jobId,
+          title: jobList.title,
+          company_name: jobList.companyName,
+          company_logo: jobList.companyLogo,
+          category: jobList.category,
+          job_type: jobList.jobType,
+          publication_date: jobList.publicationDate,
+          location: jobList.location,
+          salary: jobList.salary,
+          url: jobList.url,
+          description: jobList.description,
+        })
+        .from(jobList)
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .limit(limit)
       return NextResponse.json({ jobs });
     }
 
     // Try to get resume embedding
     const resume = await db
-      .select()
+      .select({
+        embedding: resumeVector.embedding
+      })
       .from(resumeVector)
       .where(eq(resumeVector.userId, userId))
       .limit(1);
 
-    // If no resume found, do regular search
-    if (resume.length === 0 || !resume[0]?.embedding) {
-      // Prepare a SQL query for regular search
-      const regularQuery = `
-        SELECT 
-          id, "job_id", title, "company_name", "company_logo", 
-          category, "job_type", "publication_date", location, 
-          salary, url, description
-        FROM ajf_job_list
-        ${filterConditions.length > 0 ? 'WHERE ' + filterConditions.join(' AND ') : ''}
-        ORDER BY "publication_date" DESC
-        LIMIT ${limit}
-      `;
-
-      console.log('Regular query (no resume):', regularQuery);
-      const jobs = await db.execute(sql.raw(regularQuery));
-      return NextResponse.json({ jobs });
-    }
-
     // Resume found, do vector search - make sure embedding exists
     const embedding = resume[0]?.embedding;
-    if (!embedding || !Array.isArray(embedding)) {
-      // Prepare a SQL query for regular search
-      const regularQuery = `
-        SELECT 
-          id, "job_id", title, "company_name", "company_logo", 
-          category, "job_type", "publication_date", location, 
-          salary, url, description
-        FROM ajf_job_list
-        ${filterConditions.length > 0 ? 'WHERE ' + filterConditions.join(' AND ') : ''}
-        ORDER BY "publication_date" DESC
-        LIMIT ${limit}
-      `;
-
-      console.log('Regular query (embedding issue):', regularQuery);
-      const jobs = await db.execute(sql.raw(regularQuery));
-      return NextResponse.json({ jobs });
+    if (!embedding) {
+      throw new Error("Resume embedding not found");
     }
+    const similarityScore = sql<number>`1 - (${cosineDistance(jobList.embedding, embedding)})`;
 
-    const embedArray = embedding.join(',');
-
-    // Using simple textual SQL for vector operations
-    const vectorQuery = `
-      SELECT 
-        id, "job_id", title, "company_name", "company_logo", 
-        category, "job_type", "publication_date", location, 
-        salary, url, description,
-        (1 - (embedding <-> '[${embedArray}]'::vector)) AS "similarityScore"
-      FROM ajf_job_list
-      ${filterConditions.length > 0 ? 'WHERE ' + filterConditions.join(' AND ') : ''}
-      ORDER BY embedding <-> '[${embedArray}]'::vector
-      LIMIT ${limit}
-    `;
-
-    console.log('Vector query:', vectorQuery);
-    const jobs = await db.execute(sql.raw(vectorQuery));
+    const jobs = await db
+      .select({
+        id: jobList.id,
+        job_id: jobList.jobId,
+        title: jobList.title,
+        company_name: jobList.companyName,
+        company_logo: jobList.companyLogo,
+        category: jobList.category,
+        job_type: jobList.jobType,
+        publication_date: jobList.publicationDate,
+        location: jobList.location,
+        salary: jobList.salary,
+        url: jobList.url,
+        description: jobList.description,
+        similarityScore,
+      })
+      .from(jobList)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy((t) => desc(t.similarityScore))
+      .limit(limit)
     return NextResponse.json({ jobs });
 
   } catch (error) {

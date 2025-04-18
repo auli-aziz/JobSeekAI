@@ -128,7 +128,7 @@ export default function JobGrid({ jobs }: JobGridProps) {
                     {job.similarityScore !== undefined && (
                       <MatchScore
                         score={Number(
-                          Math.min(job.similarityScore * 100 + 70, 100).toFixed(1)
+                          Math.min(job.similarityScore * 100 + 25, 100).toFixed(1)
                         )}
                         size="sm"
                       />
@@ -151,8 +151,8 @@ export default function JobGrid({ jobs }: JobGridProps) {
                         {job.job_type === "full_time"
                           ? "Full-time"
                           : job.job_type === "part_time"
-                          ? "Part-time"
-                          : job.job_type}
+                            ? "Part-time"
+                            : job.job_type}
                       </span>
                     </div>
                   )}

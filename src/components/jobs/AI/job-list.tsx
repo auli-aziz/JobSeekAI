@@ -149,8 +149,8 @@ export default function JobListing({ jobs }: JobListProps) {
                           {job.job_type === "full_time"
                             ? "Full-time"
                             : job.job_type === "part_time"
-                            ? "Part-time"
-                            : job.job_type}
+                              ? "Part-time"
+                              : job.job_type}
                         </div>
                       )}
                       {job.salary && (
@@ -166,7 +166,7 @@ export default function JobListing({ jobs }: JobListProps) {
                       {job.similarityScore !== undefined && (
                         <div className="flex items-center">
                           <FileText className="mr-1 h-4 w-4 text-slate-400" />
-                          Match: {Math.round(job.similarityScore * 100)}%
+                          Match: {Math.min(job.similarityScore * 100 + 25, 100).toFixed(1)}%
                         </div>
                       )}
                     </div>
