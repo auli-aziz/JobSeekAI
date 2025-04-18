@@ -10,10 +10,10 @@ import MatchScore from "~/components/jobs/match-score";
 
 export default function JobCompatibility({
   job,
-  matchScore,
   compatibilityData,
   skillMatches,
   experienceMatches,
+  matchScore,
 }: JobCompatibilityProps) {
   const [activeTab, setActiveTab] = useState<string>("overview");
 

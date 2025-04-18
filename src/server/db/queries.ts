@@ -79,10 +79,23 @@ export async function getJobAndResume(jobId: number, userId: string) {
 
   const result = await db
     .select({
+      id: jobList.id,
+      job_id: jobList.jobId,
+      title: jobList.title,
+      company_name: jobList.companyName,
+      company_logo: jobList.companyLogo,
+      category: jobList.category,
+      job_type: jobList.jobType,
+      publication_date: jobList.publicationDate,
+      location: jobList.location,
+      salary: jobList.salary,
+      url: jobList.url,
+      description: jobList.description,
       similarity,
     }
     )
     .from(jobList)
     .where(eq(jobList.jobId, jobId))
-  return result
+    .limit(1)
+  return result[0]
 }
