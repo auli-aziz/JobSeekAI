@@ -7,7 +7,9 @@ export default async function Home() {
   if (!session) {
     console.log("User unidentified")
   }
-  const userId = session ? session.user.id : "something"
+  //const userId = session ? session.user.id : "something"
+  //use dummy id
+  const userId = "402c091e-db8c-45f4-9b31-a5f13260ef96"
   const hasResumeVector = await hasResume(userId ?? "")
 
 

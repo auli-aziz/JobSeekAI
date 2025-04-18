@@ -24,7 +24,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../ui/tabs";
-import JobCompatibility from "../job-compatibility";
 import { processProfile } from "~/lib/actions/process-profile";
 import { dummyResume } from "~/data/dummy-resume";
 import type { Job, JobCompatibilityProps } from "~/types/jobs";
@@ -124,9 +123,8 @@ export default function JobDetail({ job }: { job: Job }) {
       <ScrollArea className="mt-4 h-[calc(70vh-180px)] pr-4">
         <Tabs defaultValue="description" className="w-full">
           <TabsList
-            className={`grid w-full ${
-              showMatchTab ? "grid-cols-2" : "grid-cols-1"
-            } bg-slate-200`}
+            className={`grid w-full ${showMatchTab ? "grid-cols-2" : "grid-cols-1"
+              } bg-slate-200`}
           >
             <TabsTrigger value="description">Job Description</TabsTrigger>
             {showMatchTab && (
@@ -140,34 +138,6 @@ export default function JobDetail({ job }: { job: Job }) {
               dangerouslySetInnerHTML={{ __html: job.description ?? "" }}
             />
           </TabsContent>
-
-          {showMatchTab && (
-            <TabsContent value="compatibility" className="pt-6">
-              {isLoading ? (
-                <div className="flex justify-center items-center h-32 text-sm text-slate-500">
-                  Checking compatibility...
-                </div>
-              ) : error ? (
-                <div className="text-red-500 text-sm text-center">
-                  {error}
-                </div>
-              ) : compatibility ? (
-                <JobCompatibility
-                  job={job}
-                  matchScore={Number(
-                    Math.min(job.similarityScore! * 100 + 70, 100).toFixed(1)
-                  )}
-                  compatibilityData={compatibility.compatibilityData}
-                  skillMatches={compatibility.skillMatches}
-                  experienceMatches={compatibility.experienceMatches}
-                />
-              ) : (
-                <div className="text-slate-500 text-sm text-center">
-                  No compatibility data found.
-                </div>
-              )}
-            </TabsContent>
-          )}
         </Tabs>
       </ScrollArea>
 

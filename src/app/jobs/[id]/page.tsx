@@ -1,4 +1,3 @@
-
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
@@ -15,20 +14,21 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import MatchScore from "~/components/jobs/match-score";
-import { getJobAndResume } from "~/server/db/queries";
-
-
+import { getJobAndResume, getResumeTextByUserId } from "~/server/db/queries";
+import JobCompatibility from "~/components/jobs/job-compatibility";
 
 export default async function JobDetailsPage({ params }: {
   params: Promise<{ id: number }>
 }) {
   const jobId = (await params).id
+  //use dummy id
   const userId = "402c091e-db8c-45f4-9b31-a5f13260ef96"
   const something = false
-  console.log(jobId)
+  const [jobWithScore, embeddedResume] = await Promise.all([
+    getJobAndResume(jobId, userId),
+    getResumeTextByUserId(userId),
+  ]);
 
-  const jobWithScore = await getJobAndResume(jobId, userId)
-  //
   // const handleShare = async () => {
   //   if (navigator.share) {
   //     navigator
@@ -44,7 +44,6 @@ export default async function JobDetailsPage({ params }: {
   //     alert("Link copied to clipboard!");
   //   }
   // };
-
 
   if (something) {
     return (
@@ -175,16 +174,7 @@ export default async function JobDetailsPage({ params }: {
                 </TabsContent>
 
                 <TabsContent value="compatibility" className="pt-6">
-                  {/*
-                  <JobCompatibility
-                    job={job}
-                    matchScore={compatibility!.matchScore}
-                    compatibilityData={compatibility!.compatibilityData}
-                    skillMatches={compatibility!.skillMatches}
-                    experienceMatches={compatibility!.experienceMatches}
-                  />
-                  */
-                  }
+                  <JobCompatibility resumeText={embeddedResume ?? ""} jobDescription={jobWithScore?.description ?? ""} />
                 </TabsContent>
               </Tabs>
             </div>

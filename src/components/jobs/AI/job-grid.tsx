@@ -9,6 +9,7 @@ import { Card, CardContent } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { Dialog, DialogContent } from "~/components/ui/dialog";
+import Link from "next/link";
 
 import {
   Briefcase,
@@ -171,7 +172,9 @@ export default function JobGrid({ jobs }: JobGridProps) {
                 <Badge variant="outline" className="bg-background">
                   {job.category ?? "Uncategorized"}
                 </Badge>
-                <div className="text-xs font-medium">View Details →</div>
+                <Link href={`/jobs/${job.job_id}`}>
+                  <div className="text-xs font-medium">View Details →</div>
+                </Link>
               </div>
             </CardContent>
           </Card>

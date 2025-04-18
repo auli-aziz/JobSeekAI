@@ -159,3 +159,12 @@ export async function updateProfileDetails(userId: string, data: {
     .where(eq(profileDetails.userId, userId))
 }
 
+
+export const getResumeTextByUserId = async (userId: string) => {
+  const result = await db
+    .select({ embeddingText: resumeVector.embeddingText })
+    .from(resumeVector)
+    .where(eq(resumeVector.userId, userId))
+    .limit(1);
+  return result[0]?.embeddingText;
+};

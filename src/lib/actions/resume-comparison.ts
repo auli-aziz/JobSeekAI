@@ -1,21 +1,23 @@
-
+"use server"
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { JobCompatibilitySchema } from "~/types/resume-comparison";
-import { type z } from "zod";
+import type { JobCompatibilty } from "~/types/jobs";
 
 
-export interface ActionResponse<T = unknown> {
+export interface ActionResponse {
   success: boolean;
   message: string;
-  data?: T;
+  data: JobCompatibilty | null;
 }
 
-export const extractDataFromResume = async (
+export const resumeCompare = async (
   prevState: ActionResponse | null,
-  resumeText: string,
-  jobDescription: string,
-): Promise<ActionResponse<z.infer<typeof JobCompatibilitySchema>>> => {
+  formData: FormData
+): Promise<ActionResponse> => {
+
+  const resumeText = formData.get('resume') as string;
+  const jobDescription = formData.get('desc') as string;
   try {
     const result = await generateObject({
       model: openai("gpt-4.1-mini"),
@@ -43,6 +45,7 @@ ${jobDescription}
     return {
       success: false,
       message: "Failed to extract data from resume.",
+      data: null,
     };
   }
 };
