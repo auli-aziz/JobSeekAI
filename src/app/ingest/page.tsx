@@ -1,7 +1,7 @@
 "use client"
 import { useActionState, startTransition, useState } from 'react'
 import { Button } from '~/components/ui/button'
-import { ingestJobs } from '~/server/scripts/ingest-jobs'
+import { ingestJobs } from '~/lib/actions/ingest-jobs'
 import { CheckCircle, XCircle, RefreshCw } from 'lucide-react'
 import { Database } from 'lucide-react'
 import { Card, CardTitle, CardHeader, CardDescription, CardContent, CardFooter } from '~/components/ui/card'

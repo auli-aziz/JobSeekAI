@@ -17,7 +17,7 @@ import {
   DialogTrigger,
 } from "./ui/dialog"
 import { cn } from "~/lib/utils"
-import { extractDataFromResume } from "~/actions/extract-resume"
+import { extractDataFromResume } from "~/lib/actions/extract-resume"
 
 
 

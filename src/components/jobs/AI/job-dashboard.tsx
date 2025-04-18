@@ -6,7 +6,7 @@ import { useState, useCallback, useEffect } from "react"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { Badge } from "~/components/ui/badge"
-import { Search, Briefcase, FilterIcon, X, RefreshCw, LayoutList, LayoutGrid, FileText, Sparkles, Upload } from "lucide-react"
+import { Search, Briefcase, FilterIcon, X, RefreshCw, LayoutList, LayoutGrid, FileText, Sparkles, Upload, Star, Flame, Lightbulb } from "lucide-react"
 import { Skeleton } from "~/components/ui/skeleton"
 import JobListing from "./job-list"
 import JobGrid from "./job-grid"
@@ -29,6 +29,7 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [ showResumeDialog, setShowResumeDialog] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("")
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("")
@@ -332,6 +333,116 @@ export default function JobDashboard({ hasResumeVector, userId }: { hasResumeVec
               </div>
             </div>
 
+            <div className="mt-6 mb-6">
+              <div
+                className={`rounded-xl ${useResumeMatch
+                  ? "bg-gradient-to-r from-vibrant-purple/10 via-vibrant-blue/10 to-vibrant-teal/10 border border-vibrant-purple/20"
+                  : "bg-muted/40"
+                  } p-6 transition-all duration-500`}
+              >
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-3 rounded-full ${useResumeMatch
+                      ? "bg-gradient-to-r from-vibrant-purple/20 to-vibrant-blue/20"
+                      : "bg-muted"}`}
+                    >
+                      <Sparkles className={`h-6 w-6 ${useResumeMatch ? "text-vibrant-purple" : "text-muted-foreground"}`} />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-lg">AI Resume Matching</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {useResumeMatch
+                          ? "Jobs are ranked based on your skills and experience"
+                          : "Enable to find jobs that match your skills and experience"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 w-full sm:w-auto">
+                    {!hasResumeVector ? (
+                      <Button
+                        variant={useResumeMatch ? "default" : "outline"}
+                        className={`relative overflow-hidden group transition-all duration-500 ${useResumeMatch
+                          ? "bg-gradient-to-r from-vibrant-purple to-vibrant-blue text-white"
+                          : "border-vibrant-purple hover:border-vibrant-purple/80"
+                        } rounded-xl pulse-on-hover`}
+                        onClick={() => setShowResumeDialog(true)}
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload Resume
+                        {!useResumeMatch && (
+                          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-vibrant-purple/20 to-vibrant-blue/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></span>
+                        )}
+                      </Button>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        <Switch
+                          id="resume-match"
+                          checked={useResumeMatch}
+                          onCheckedChange={setUseResumeMatch}
+                          className={`${useResumeMatch ? "bg-gradient-to-r from-vibrant-purple to-vibrant-blue" : ""} data-[state=checked]:bg-vibrant-purple`}
+                        />
+                        <label htmlFor="resume-match" className="text-sm flex items-center cursor-pointer">
+                          <span>Match to my resume</span>
+                        </label>
+                      </div>
+                    )}
+
+                    {hasResumeVector && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowResumeDialog(true)}
+                        className="text-xs hover:text-vibrant-purple hover:bg-vibrant-purple/10"
+                      >
+                        <FileText className="h-3 w-3 mr-1" />
+                        View Resume
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {useResumeMatch && (
+                  <div className="mt-4 pt-4 border-t border-vibrant-purple/10">
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="outline" className="bg-match-highBg text-match-high border-match-high/20 font-medium">
+                        <Star className="h-3 w-3 mr-1 fill-match-high" />
+                        {filteredJobs.filter((job) => (job.similarityScore ?? 85) >= 85).length} Strong Matches
+                      </Badge>
+                      <Badge variant="outline" className="bg-match-mediumBg text-match-medium border-match-medium/20 font-medium">
+                        <Flame className="h-3 w-3 mr-1" />
+                        {filteredJobs.filter((job) => (job.similarityScore ?? 85) >= 70 && (job.similarityScore ?? 85) < 85).length} Good Matches
+                      </Badge>
+                      <Badge variant="outline" className="bg-muted font-medium">
+                        <Lightbulb className="h-3 w-3 mr-1" />
+                        {filteredJobs.filter((job) => (job.similarityScore ?? 85) < 70).length} Other Jobs
+                      </Badge>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Resume Matching Switch */}
+            <div className="flex items-center mt-4 space-x-2">
+              <Switch
+                id="resume-match"
+                checked={useResumeMatch}
+                onCheckedChange={setUseResumeMatch}
+              />
+              <label
+                htmlFor="resume-match"
+                className="text-sm flex items-center cursor-pointer"
+              >
+                <FileText className="h-4 w-4 mr-1 text-primary" />
+                Match to my resume
+              </label>
+              {useResumeMatch && (
+                <Badge variant="outline" className="ml-2">
+                  Using demo profile
+                </Badge>
+              )}
+            </div>
           </div>
         </header>
 

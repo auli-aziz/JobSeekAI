@@ -1,8 +1,8 @@
 "use server"
-import { db } from '../db';
 import { embed } from "ai"
 import { eq } from 'drizzle-orm';
-import { jobList } from '../db/schema';
+import { db } from '~/server/db';
+import { jobList } from '~/server/db/schema';
 import type { JobsResponse } from '~/types/jobs';
 import { stripHtml } from '~/lib/strip-html';
 import { env } from '~/env';

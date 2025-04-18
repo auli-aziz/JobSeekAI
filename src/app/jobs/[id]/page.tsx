@@ -2,7 +2,6 @@
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { Skeleton } from "~/components/ui/skeleton";
 import {
   ArrowLeft,
   Briefcase,
@@ -282,49 +281,4 @@ export default async function JobDetailsPage({ params }: {
   );
 }
 
-function JobDetailsPageSkeleton() {
-  return (
-    <div className="min-h-screen bg-slate-50 pb-16">
-      {/* Header */}
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white">
-        <div className="w-full px-4 py-8 lg:px-20">
-          <div className="flex items-center justify-between">
-            <Skeleton className="h-9 w-20" />
-            <div className="flex gap-2">
-              <Skeleton className="h-9 w-24" />
-              <Skeleton className="h-9 w-28" />
-            </div>
-          </div>
-        </div>
-      </header>
 
-      <div className="w-full px-4 py-8 lg:px-20">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            {/* Job Header */}
-            <div className="mb-6">
-              <Skeleton className="mb-2 h-8 w-3/4" />
-              <Skeleton className="mb-4 h-5 w-1/2" />
-              <div className="flex gap-2">
-                <Skeleton className="h-6 w-32" />
-                <Skeleton className="h-6 w-24" />
-                <Skeleton className="h-6 w-28" />
-              </div>
-            </div>
-
-            {/* Job Content */}
-            <Skeleton className="h-[600px] w-full rounded-lg" />
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            <Skeleton className="h-[180px] w-full rounded-lg" />
-            <Skeleton className="h-[150px] w-full rounded-lg" />
-            <Skeleton className="h-[300px] w-full rounded-lg" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
