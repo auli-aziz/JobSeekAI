@@ -6,11 +6,12 @@ import { Header } from "~/components/Header";
 import { SessionProvider } from "next-auth/react";
 
 import { Space_Grotesk } from "next/font/google";
+import Footer from "~/components/footer";
 
 export const metadata: Metadata = {
   title: "JobSeekAI",
   description: "Easily find your dream job with the help of AI",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/favicon.svg" }],
 };
 
 const space_grotesk = Space_Grotesk({
@@ -49,6 +50,7 @@ export default function RootLayout({
             />
             <Header />
             <main className="mx-auto max-w-screen-2xl">{children}</main>
+            <Footer />
           </SessionProvider>
         </ThemeProvider>
       </body>
