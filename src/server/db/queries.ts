@@ -3,8 +3,8 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { embed } from 'ai';
 import { env } from '~/env';
 import { db } from '.';
-import { resumeVector } from './schema';
-import { eq } from 'drizzle-orm';
+import { jobList, resumeVector } from './schema';
+import { eq, sql, cosineDistance } from 'drizzle-orm';
 
 
 const openai = createOpenAI({
@@ -60,3 +60,29 @@ export async function hasResume(userId: string): Promise<boolean> {
   return result.length > 0
 }
 
+export async function getJobAndResume(jobId: number, userId: string) {
+  const getResumeVector = await db
+    .select({
+      embedding: resumeVector.embedding
+    })
+    .from(resumeVector)
+    .where(eq(resumeVector.userId, userId))
+    .limit(1)
+
+  const resumeEmbedding = getResumeVector[0]?.embedding;
+
+  if (!resumeEmbedding) {
+    throw new Error("Resume embedding not found");
+  }
+
+  const similarity = sql<number>`1 - (${cosineDistance(jobList.embedding, resumeEmbedding)})`;
+
+  const result = await db
+    .select({
+      similarity,
+    }
+    )
+    .from(jobList)
+    .where(eq(jobList.jobId, jobId))
+  return result
+}
