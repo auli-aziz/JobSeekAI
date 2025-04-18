@@ -25,7 +25,7 @@ import {
   TabsTrigger,
 } from "../../ui/tabs";
 import JobCompatibility from "../job-compatibility";
-import { processProfile } from "~/server/scripts/process-profile";
+import { processProfile } from "~/lib/actions/process-profile";
 import { dummyResume } from "~/data/dummy-resume";
 import type { Job, JobCompatibilityProps } from "~/types/jobs";
 
