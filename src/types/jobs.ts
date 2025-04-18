@@ -49,3 +49,14 @@ export interface JobCompatibilityProps {
   skillMatches: SkillMatch[];
   experienceMatches: ExperienceMatch[];
 }
+export interface AiRecommendation {
+  recommendation: string;
+}
+
+
+export interface JobCompatibilty {
+  compatibilityData: CompatibilityCategoryGroup[];
+  skillMatches: SkillMatch[];
+  experienceMatches: ExperienceMatch[];
+  aiRecommendation: AiRecommendation;
+}
