@@ -9,7 +9,7 @@ export default function AboutPage() {
       <main className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
-            About JobSeekAI
+            About WorkWiz
           </h1>
           <p className="text-xl text-text-secondary max-w-2xl mx-auto">
             Your intelligent platform for discovering and applying to the best opportunities worldwide.

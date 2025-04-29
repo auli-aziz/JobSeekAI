@@ -9,7 +9,7 @@ import { Space_Grotesk } from "next/font/google";
 import Footer from "~/components/footer";
 
 export const metadata: Metadata = {
-  title: "JobSeekAI",
+  title: "WorkWiz",
   description: "Easily find your dream job with the help of AI",
   icons: [{ rel: "icon", url: "/favicon.svg" }],
 };

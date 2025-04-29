@@ -23,7 +23,7 @@ export const Header = () => {
             <BriefcaseBusiness size={32} />
           </div>
           <strong className="text-primary text-lg select-none">
-            JobSeekAI
+            WorkWiz
           </strong>
         </div>
       </Link>

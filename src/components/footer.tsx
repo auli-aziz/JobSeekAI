@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="flex flex-col items-center mb-6">
           <h3 className="flex items-center text-xl font-bold mb-2">
             <Briefcase className="text-primary mr-2 h-6 w-6" />
-            JobSeekAI
+            WorkWiz
           </h3>
           <p className="text-sm text-slate-500">
             Your intelligent job-matching platform
@@ -34,7 +34,7 @@ export default function Footer() {
         {/* Optional: Add social media icons here if needed */}
 
         <p className="text-xs text-slate-400">
-          © {new Date().getFullYear()} JobSeekAI. All rights reserved.
+          © {new Date().getFullYear()} WorkWiz. All rights reserved.
         </p>
       </div>
     </footer>
