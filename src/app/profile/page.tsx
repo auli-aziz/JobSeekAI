@@ -16,7 +16,7 @@ import { CertificationManager } from "~/components/edit-profile/certification-ma
 export default async function ProfilePage() {
   const session = await auth()
   if (!session) {
-    return redirect("/login")
+    return redirect("/signin")
   }
 
   const user = session.user
