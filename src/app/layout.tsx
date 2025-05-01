@@ -1,8 +1,8 @@
 import "~/styles/globals.css";
-import { ThemeProvider } from "~/components/ThemeProvider";
+import { ThemeProvider } from "~/context/theme-provider";
 import { type Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
-import { Header } from "~/components/Header";
+import { Header } from "~/components/header";
 import { SessionProvider } from "next-auth/react";
 
 import { Space_Grotesk } from "next/font/google";

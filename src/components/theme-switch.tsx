@@ -3,7 +3,7 @@ import { capitalize } from "~/lib/utils";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { FiSun } from "react-icons/fi";
-import Button from "./Button";
+import Button from "./button";
 
 export default function ThemeSwitch() {
   const [mounted, setMounted] = useState(false);

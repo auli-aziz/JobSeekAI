@@ -1,11 +1,11 @@
 "use client";
 
-import Button from "~/components/Button";
+import Button from "~/components/button";
 import Link from "next/link";
 import {
   GoogleSignInButton,
   LinkedInSignInButton,
-} from "~/components/AuthButton";
+} from "~/components/auth-button";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";

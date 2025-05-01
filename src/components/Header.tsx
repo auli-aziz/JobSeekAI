@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import ThemeSwitch from "./ThemeSwitch";
+import ThemeSwitch from "./theme-switch";
 import { useSession } from "next-auth/react";
-import { SignOutButton } from "./AuthButton";
+import { SignOutButton } from "./auth-button";
 import { FaSignInAlt } from "react-icons/fa";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { BriefcaseBusiness } from "lucide-react";

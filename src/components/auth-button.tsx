@@ -3,7 +3,7 @@
 import { signIn, signOut } from "next-auth/react";
 import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5";
-import Button from "./Button";
+import Button from "./button";
 
 export function GoogleSignInButton({
   callback,
