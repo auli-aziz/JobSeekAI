@@ -1,4 +1,4 @@
-import JobDashboard from "~/components/jobs/AI/job-dashboard"
+import JobDashboard from "~/components/jobs/job-dashboard"
 import { auth } from "~/server/auth"
 import { hasResume } from "~/server/db/queries";
 export default async function Home() {
@@ -7,8 +7,7 @@ export default async function Home() {
   if (!session) {
     console.log("User unidentified")
   }
-  //const userId = session ? session.user.id : "something"
-  //use dummy id
+  
   const userId = "402c091e-db8c-45f4-9b31-a5f13260ef96"
   const hasResumeVector = await hasResume(userId ?? "")
 

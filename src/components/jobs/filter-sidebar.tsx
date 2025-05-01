@@ -1,10 +1,10 @@
 "use client"
 
 import type React from "react"
-import { Button } from "../ui/button"
-import { Label } from "../ui/label"
-import { Switch } from "../ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { Button } from "~/components/ui/button"
+import { Label } from "~/components/ui/label"
+import { Switch } from "~/components/ui/switch"
+import { Select, SelectTrigger, SelectItem, SelectContent, SelectValue } from "~/components/ui/select"
 import { X } from "lucide-react"
 import { cn } from "~/lib/utils"
 
@@ -38,20 +38,20 @@ export default function FilterSidebar({
   resetFilters,
 }: FilterSidebarProps) {
   const categories = [
-    { value: "software-dev", label: "Software Development" },
-    { value: "marketing", label: "Marketing" },
-    { value: "design", label: "Design" },
-    { value: "customer-support", label: "Customer Support" },
-    { value: "sales", label: "Sales" },
-    { value: "product", label: "Product" },
-    { value: "business", label: "Business" },
-    { value: "data", label: "Data" },
-    { value: "devops", label: "DevOps" },
-    { value: "finance", label: "Finance" },
-    { value: "human-resources", label: "Human Resources" },
-    { value: "qa", label: "QA" },
-    { value: "writing", label: "Writing" },
-    { value: "all-others", label: "All Others" },
+    { value: "Software Development", label: "Software Development" },
+    { value: "Marketing", label: "Marketing" },
+    { value: "Design", label: "Design" },
+    { value: "Customer Support", label: "Customer Support" },
+    { value: "Sales", label: "Sales" },
+    { value: "Product", label: "Product" },
+    { value: "Business", label: "Business" },
+    { value: "Data", label: "Data" },
+    { value: "DevOps", label: "DevOps" },
+    { value: "Finance", label: "Finance" },
+    { value: "Human Resources", label: "Human Resources" },
+    { value: "QA", label: "QA" },
+    { value: "Writing", label: "Writing" },
+    { value: "All Others", label: "All Others" },
   ]
 
   const jobTypes = [
